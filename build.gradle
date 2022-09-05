@@ -17,11 +17,17 @@ repositories {
     maven {
         url 'https://global.repo.jmix.io/repository/public'
     }
-    maven {
-        url = 'https://global.repo.jmix.io/repository/premium'
-        credentials {
-            username = rootProject['premiumRepoUser']
-            password = rootProject['premiumRepoPass']
+    if (file('trial_repository').exists()) {
+        maven {
+            url "file://${project.projectDir}/trial_repository"
+        }
+    } else {
+        maven {
+            url = 'https://global.repo.jmix.io/repository/premium'
+            credentials {
+                username = rootProject['premiumRepoUser']
+                password = rootProject['premiumRepoPass']
+            }
         }
     }
 }
