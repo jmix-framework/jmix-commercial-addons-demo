@@ -17,11 +17,13 @@
       </entry>
       <entry key="jmix-commercial-addons-demo.main">
         <ModuleSettings>
-          <option name="dataStoreOptions">
+          <option name="dataStoreOptionsV2">
             <map>
               <entry key="main">
                 <value>
-                  <DataStoreSettings />
+                  <DataStoreSettingsV2>
+                    <option name="nameLengthMode" value="ORACLE" />
+                  </DataStoreSettingsV2>
                 </value>
               </entry>
             </map>
