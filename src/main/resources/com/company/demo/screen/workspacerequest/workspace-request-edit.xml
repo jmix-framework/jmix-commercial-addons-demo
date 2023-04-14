@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://workspaceRequestEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="workspaceRequestDc"
+                  class="com.company.demo.entity.WorkspaceRequest">
+            <fetchPlan extends="_base">
+                <property name="hrManager" fetchPlan="_instance_name"/>
+                <property name="employee" fetchPlan="_instance_name"/>
+                <property name="softwareRequests" fetchPlan="_base">
+                    <property name="software" fetchPlan="_base"/>
+                </property>
+            </fetchPlan>
+            <loader/>
+            <collection id="softwareRequestsDc" property="softwareRequests"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <screenSettings id="settingsFacet" auto="true"/>
+    </facets>
+    <actions>
+        <action id="windowCommitAndClose" caption="msg:///actions.Ok"
+                icon="EDITOR_OK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="windowClose"
+                caption="msg:///actions.Close"
+                icon="EDITOR_CANCEL"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true" expand="softwareRequestsBox">
+        <form id="form" dataContainer="workspaceRequestDc">
+            <column width="350px">
+                <dateField id="dateField" property="date"/>
+                <textField id="hrManagerField" property="hrManager"/>
+                <entityPicker id="employeeField" property="employee">
+                    <actions>
+                        <action id="entityLookup" type="entity_lookup"/>
+                        <action id="entityClear" type="entity_clear"/>
+                    </actions>
+                </entityPicker>
+                <comboBox id="workTypeField" property="workType"/>
+                <textArea rows="5" id="processLogField" property="processLog"/>
+            </column>
+        </form>
+        <groupBox id="softwareRequestsBox" caption="msg://com.company.demo.entity/WorkspaceRequest.softwareRequests">
+            <table id="softwareRequestsTable" dataContainer="softwareRequestsDc" width="100%" height="100%"
+                   sortable="false">
+                <actions>
+                    <action id="create" type="create"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                </actions>
+                <columns>
+                    <column id="sortValue" caption="#"/>
+                    <column id="permissionGranted"/>
+                    <column id="software"/>
+                </columns>
+                <buttonsPanel>
+                    <button action="softwareRequestsTable.create"/>
+                    <button action="softwareRequestsTable.edit"/>
+                    <button action="softwareRequestsTable.remove"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

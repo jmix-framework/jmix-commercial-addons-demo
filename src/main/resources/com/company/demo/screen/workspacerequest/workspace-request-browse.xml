@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:c="http://jmix.io/schema/ui/jpql-condition"
+        caption="msg://workspaceRequestBrowse.caption"
+        focusComponent="workspaceRequestsTable">
+    <data readOnly="true">
+        <collection id="workspaceRequestsDc"
+                    class="com.company.demo.entity.WorkspaceRequest">
+            <fetchPlan extends="_base">
+                <property name="hrManager" fetchPlan="_instance_name"/>
+                <property name="employee" fetchPlan="_instance_name"/>
+            </fetchPlan>
+            <loader id="workspaceRequestsDl">
+                <query>
+                    <![CDATA[select e from WorkspaceRequest e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <screenSettings id="settingsFacet" auto="true"/>
+    </facets>
+    <actions>
+        <action id="lookupSelectAction"
+                caption="msg:///actions.Select"
+                icon="LOOKUP_OK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="lookupCancelAction"
+                caption="msg:///actions.Cancel"
+                icon="LOOKUP_CANCEL"/>
+    </actions>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="workspaceRequestsTable" spacing="true">
+        <filter id="filter"
+                dataLoader="workspaceRequestsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="workspaceRequestsTable"
+                    width="100%"
+                    dataContainer="workspaceRequestsDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="date"/>
+                <column id="hrManager"/>
+                <column id="employee"/>
+                <column id="workType"/>
+            </columns>
+            <simplePagination/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="workspaceRequestsTable.create"/>
+                <button id="editBtn" action="workspaceRequestsTable.edit"/>
+                <button id="removeBtn" action="workspaceRequestsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>
