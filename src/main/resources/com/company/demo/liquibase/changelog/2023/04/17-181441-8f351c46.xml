@@ -70,8 +70,7 @@
             <column name="WORK_TYPE" type="VARCHAR(1)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PROCESS_LOG"
-                    type="CLOB"/>
+            <column name="PROCESS_LOG" type="CLOB"/>
         </createTable>
     </changeSet>
     <changeSet id="5" author="jmix-commercial-addons-demo">
@@ -94,7 +93,7 @@
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="WORKSPACE_REQUEST_ID" baseTableName="SOFTWARE_REQUEST"
-                                 constraintName="FK_SOFTWAREREQ_ON_WORKSPACERE" onDelete="CASCADE"
+                                 constraintName="FK_SOFTWARE_REQUEST_ON_WORKSPACE_REQUEST" onDelete="CASCADE"
                                  referencedColumnNames="ID" referencedTableName="WORKSPACE_REQUEST"/>
     </changeSet>
     <changeSet id="8" author="jmix-commercial-addons-demo">
@@ -103,7 +102,7 @@
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="SOFTWARE_ID" baseTableName="SOFTWARE_REQUEST"
-                                 constraintName="FK_SOFTWAREREQUEST_ON_SOFTWARE" referencedColumnNames="ID"
+                                 constraintName="FK_SOFTWARE_REQUEST_ON_SOFTWARE" referencedColumnNames="ID"
                                  referencedTableName="SOFTWARE"/>
     </changeSet>
     <changeSet id="9" author="jmix-commercial-addons-demo">
@@ -121,7 +120,7 @@
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="HR_MANAGER_ID" baseTableName="WORKSPACE_REQUEST"
-                                 constraintName="FK_WORKSPACEREQUE_ON_HRMANAGER" referencedColumnNames="ID"
+                                 constraintName="FK_WORKSPACE_REQUEST_ON_HR_MANAGER" referencedColumnNames="ID"
                                  referencedTableName="USER_"/>
     </changeSet>
     <changeSet id="11" author="jmix-commercial-addons-demo">
@@ -130,7 +129,7 @@
         </createIndex>
 
         <addForeignKeyConstraint baseColumnNames="EMPLOYEE_ID" baseTableName="WORKSPACE_REQUEST"
-                                 constraintName="FK_WORKSPACEREQUES_ON_EMPLOYEE" referencedColumnNames="ID"
+                                 constraintName="FK_WORKSPACE_REQUEST_ON_EMPLOYEE" referencedColumnNames="ID"
                                  referencedTableName="USER_"/>
     </changeSet>
 </databaseChangeLog>
