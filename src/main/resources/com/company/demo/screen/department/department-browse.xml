@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://jmix.io/schema/ui/window"
         xmlns:c="http://jmix.io/schema/ui/jpql-condition"
+        xmlns:ntf="http://jmix.io/schema/notifications/ui"
         caption="msg://departmentBrowse.caption"
         focusComponent="departmentsTable">
     <data readOnly="true">

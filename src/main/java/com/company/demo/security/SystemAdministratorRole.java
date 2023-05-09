@@ -1,6 +1,7 @@
 package com.company.demo.security;
 
 import com.company.demo.entity.*;
+import io.jmix.bpmui.security.role.BpmProcessActorRole;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
@@ -13,7 +14,7 @@ import javax.annotation.Nonnull;
 
 @Nonnull
 @ResourceRole(name = "SystemAdministrator", code = SystemAdministratorRole.CODE, scope = "UI")
-public interface SystemAdministratorRole {
+public interface SystemAdministratorRole extends BpmProcessActorRole {
 
     String CODE = "system-administrator";
 
@@ -37,7 +38,8 @@ public interface SystemAdministratorRole {
     @EntityPolicy(entityClass = User.class, actions = EntityPolicyAction.READ)
     void user();
 
-    @EntityAttributePolicy(entityClass = WorkspaceRequest.class, attributes = {"id", "version", "date", "hrManager", "employee", "workType", "softwareRequests"}, action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = WorkspaceRequest.class, attributes = {"workType", "employee", "hrManager", "date", "version", "id"}, action = EntityAttributePolicyAction.VIEW)
+    @EntityAttributePolicy(entityClass = WorkspaceRequest.class, attributes = "softwareRequests", action = EntityAttributePolicyAction.MODIFY)
     @EntityPolicy(entityClass = WorkspaceRequest.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE})
     void workspaceRequest();
 }

@@ -6,11 +6,16 @@ import com.company.demo.entity.User;
 import com.company.demo.security.CoordinatorRole;
 import com.company.demo.security.HrManagerRole;
 import com.company.demo.security.SystemAdministratorRole;
+import io.jmix.bpm.entity.UserGroup;
+import io.jmix.bpm.entity.UserGroupRole;
 import io.jmix.core.DataManager;
 import io.jmix.core.SaveContext;
 import io.jmix.core.security.Authenticated;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import io.jmix.securitydata.entity.UserSubstitutionEntity;
+import io.jmix.securityui.role.UiMinimalRole;
+import org.flowable.engine.RepositoryService;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,10 +30,12 @@ public class DemoDataInitializer {
 
     private final DataManager dataManager;
     private final PasswordEncoder passwordEncoder;
+    private final RepositoryService repositoryService;
 
-    public DemoDataInitializer(DataManager dataManager, PasswordEncoder passwordEncoder) {
+    public DemoDataInitializer(DataManager dataManager, PasswordEncoder passwordEncoder, RepositoryService repositoryService) {
         this.dataManager = dataManager;
         this.passwordEncoder = passwordEncoder;
+        this.repositoryService = repositoryService;
     }
 
     @EventListener
@@ -40,7 +47,19 @@ public class DemoDataInitializer {
         initSoftware();
         List<Department> departments = initDepartments();
         List<User> users = initUsers(departments);
+        initUserSubstitutions();
         assignRoles(users);
+        initBpmUserGroups();
+        deployProcess();
+    }
+
+    private void initUserSubstitutions() {
+        Arrays.asList("alice", "bob", "linda", "susan").forEach(name -> {
+            UserSubstitutionEntity userSubstitution = dataManager.create(UserSubstitutionEntity.class);
+            userSubstitution.setUsername("admin");
+            userSubstitution.setSubstitutedUsername(name);
+            dataManager.save(userSubstitution);
+        });
     }
 
     private void initSoftware() {
@@ -101,33 +120,6 @@ public class DemoDataInitializer {
         list.add(user);
         dataManager.save(saveContext);
 
-        Department marketingDept = departments.get(2);
-
-        saveContext = new SaveContext();
-        user = dataManager.create(User.class);
-        user.setUsername("james");
-        user.setPassword(createPassword());
-        user.setFirstName("James");
-        user.setLastName("Wilson");
-        user.setDepartment(marketingDept);
-        saveContext.saving(user);
-        list.add(user);
-        dataManager.save(saveContext);
-
-        marketingDept.setCoordinator(user);
-        dataManager.save(marketingDept);
-
-        saveContext = new SaveContext();
-        user = dataManager.create(User.class);
-        user.setUsername("mary");
-        user.setPassword(createPassword());
-        user.setFirstName("Mary");
-        user.setLastName("Jones");
-        user.setDepartment(marketingDept);
-        saveContext.saving(user);
-        list.add(user);
-        dataManager.save(saveContext);
-
         Department operationsDept = departments.get(3);
 
         saveContext = new SaveContext();
@@ -164,7 +156,13 @@ public class DemoDataInitializer {
 
             roleAssignment = dataManager.create(RoleAssignmentEntity.class);
             roleAssignment.setUsername(user.getUsername());
-            roleAssignment.setRoleCode("ui-minimal");
+            roleAssignment.setRoleCode(UiMinimalRole.CODE);
+            roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
+            dataManager.save(roleAssignment);
+
+            roleAssignment = dataManager.create(RoleAssignmentEntity.class);
+            roleAssignment.setUsername(user.getUsername());
+            roleAssignment.setRoleCode("notifications-in-app-notifications-user");
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
             dataManager.save(roleAssignment);
 
@@ -190,6 +188,37 @@ public class DemoDataInitializer {
             return CoordinatorRole.CODE;
 
         return null;
+    }
+
+    private void initBpmUserGroups() {
+        UserGroup userGroup;
+        UserGroupRole userGroupRole;
+
+        userGroup = dataManager.create(UserGroup.class);
+        userGroup.setName("HR Managers");
+        userGroup.setCode("hr-managers");
+
+        userGroupRole = dataManager.create(UserGroupRole.class);
+        userGroupRole.setUserGroup(userGroup);
+        userGroupRole.setRoleCode(HrManagerRole.CODE);
+
+        dataManager.save(userGroup, userGroupRole);
+
+        userGroup = dataManager.create(UserGroup.class);
+        userGroup.setName("System Administrators");
+        userGroup.setCode("system-administrators");
+
+        userGroupRole = dataManager.create(UserGroupRole.class);
+        userGroupRole.setUserGroup(userGroup);
+        userGroupRole.setRoleCode(SystemAdministratorRole.CODE);
+
+        dataManager.save(userGroup, userGroupRole);
+    }
+
+    private void deployProcess() {
+        repositoryService.createDeployment()
+                .addClasspathResource("process-drafts/workspace-preparation.bpmn20.xml")
+                .deploy();
     }
 
     private String createPassword() {

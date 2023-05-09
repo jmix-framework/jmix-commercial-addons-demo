@@ -1,4 +1,5 @@
 <window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:ntf="http://jmix.io/schema/notifications/ui"
         caption="msg://application.caption">
 
     <layout>
@@ -19,6 +20,7 @@
                            stylename="app-title"
                            value="msg://application.logoLabel"/>
                 </cssLayout>
+                <ntf:notificationsIndicator id="ntfIndicator"/>
                 <sideMenu id="sideMenu"
                           width="100%"
                           stylename="jmix-drawer-content"/>

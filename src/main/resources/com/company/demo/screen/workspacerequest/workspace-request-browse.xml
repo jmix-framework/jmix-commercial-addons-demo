@@ -42,8 +42,7 @@
                     width="100%"
                     dataContainer="workspaceRequestsDc">
             <actions>
-                <action id="create" type="create"/>
-                <action id="edit" type="edit"/>
+                <action id="view" type="view"/>
                 <action id="remove" type="remove"/>
             </actions>
             <columns>
@@ -55,8 +54,8 @@
             <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
-                <button id="createBtn" action="workspaceRequestsTable.create"/>
-                <button id="editBtn" action="workspaceRequestsTable.edit"/>
+                <button id="startProcessBtn" caption="Start workspace preparation process" primary="true"/>
+                <button id="viewBtn" action="workspaceRequestsTable.view"/>
                 <button id="removeBtn" action="workspaceRequestsTable.remove"/>
             </buttonsPanel>
         </groupTable>

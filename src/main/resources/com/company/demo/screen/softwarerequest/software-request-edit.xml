@@ -33,8 +33,8 @@
                 caption="msg:///actions.Close"
                 icon="EDITOR_CANCEL"/>
     </actions>
-    <dialogMode height="600"
-                width="800"/>
+    <dialogMode height="-1"
+                width="-1" resizable="true"/>
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="softwareRequestDc">
             <column width="350px">

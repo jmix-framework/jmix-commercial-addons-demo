@@ -21,16 +21,17 @@
         <screenSettings id="settingsFacet" auto="true"/>
     </facets>
     <actions>
-        <action id="windowCommitAndClose" caption="msg:///actions.Ok"
-                icon="EDITOR_OK"
-                primary="true"
-                shortcut="${COMMIT_SHORTCUT}"/>
+<!--        The standard action is replaced with custom `completeBtn` button, see below -->
+<!--        <action id="windowCommitAndClose" caption="msg:///actions.Ok"-->
+<!--                icon="EDITOR_OK"-->
+<!--                primary="true"-->
+<!--                shortcut="${COMMIT_SHORTCUT}"/>-->
         <action id="windowClose"
                 caption="msg:///actions.Close"
                 icon="EDITOR_CANCEL"/>
     </actions>
-    <dialogMode height="600"
-                width="800"/>
+    <dialogMode height="800"
+                width="800" resizable="true"/>
     <layout spacing="true" expand="softwareRequestsBox">
         <form id="form" dataContainer="workspaceRequestDc">
             <column width="350px">
@@ -43,7 +44,6 @@
                     </actions>
                 </entityPicker>
                 <comboBox id="workTypeField" property="workType"/>
-                <textArea rows="5" id="processLogField" property="processLog"/>
             </column>
         </form>
         <groupBox id="softwareRequestsBox" caption="msg://com.company.demo.entity/WorkspaceRequest.softwareRequests">
@@ -66,8 +66,11 @@
                 </buttonsPanel>
             </table>
         </groupBox>
+            <textArea rows="5" id="processLogField" dataContainer="workspaceRequestDc" property="processLog"
+                      width="100%" caption="msg://com.company.demo.entity/WorkspaceRequest.processLog"/>
         <hbox id="editActions" spacing="true">
-            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+<!--            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>-->
+            <button id="completeBtn" caption="OK" primary="true"/>
             <button id="closeBtn" action="windowClose"/>
         </hbox>
     </layout>
