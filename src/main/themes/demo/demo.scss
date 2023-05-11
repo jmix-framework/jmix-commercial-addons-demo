@@ -1,0 +1,14 @@
+@import "../helium/helium";
+
+@mixin demo {
+  @include helium;
+
+  .jmix-drawer .jmix-drawer-header {
+    height: 80px;
+
+    .app-title {
+      white-space: break-spaces;
+      width: 150px;
+    }
+  }
+}

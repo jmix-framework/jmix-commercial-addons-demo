@@ -1,0 +1,8 @@
+@import "demo-defaults";
+@import "addons";
+@import "demo";
+
+.demo {
+  @include addons;
+  @include demo;
+}
