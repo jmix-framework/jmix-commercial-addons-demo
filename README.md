@@ -8,7 +8,7 @@ This project includes the following Jmix commercial add-ons:
 - [Notifications](https://www.jmix.io/marketplace/notifications/)
 - [WebDAV](https://www.jmix.io/marketplace/webdav/)
 
-## Demo Data
+## Demo Data and Process
 
 The project contains the data model, UI and BPMN definition demonstrating the process of preparing the workspace for new employees. The process involves functionality of BPM and Notifications add-ons.
 
@@ -20,9 +20,20 @@ When you start the application for the first time, it automatically deploys the 
 
 - `[admin]` - the standard admin with full rights to the application. However, he cannot start the workspace preparation process.
 - `Alice Brown [alice]` - has `HR Manager` role, can start the workspace preparation process and check completed requests.
-- `Robert Taylor [bob]` - has `SystemAdministrator` role, can define software systems in the application and grant permissions to them.
+- `Robert Taylor [bob]` - has `System Administrator` role, can define software systems in the application and grant permissions to them.
 - `Linda Evans [linda]` - has `Coordinator` role and is set as coordinator for the `Operations` department. Can allocate physical workspace for new employees working in the office.
 - `Susan Baker [susan]` - a new employee. Can only receive notifications about granted permissions and allocated workspace sent to her by the process.
+
+All users except `admin` have password `1`. The `admin` user has `admin` password.
+
+Below is a brief description of the [business process](doc/workspace-preparation-process.png) of a workspace preparation for a new employee: 
+
+- The HR Manager creates a new request for an employee and starts the process by clicking a button in the _Workspace requests_ screen.
+- The process creates a user task for a System Administrator. The user task opens the _Workspace request editor_ screen, allowing the System Administrator to add `SoftwareRequest` records indicating permitted software to the `WorkspaceRequest` entity. After the task is complete, the process writes a log message to the `WorkspaceRequest` entity and sends a notification to the employee about granted permissions.
+- If the work type is `Office`, then the process creates a user task for a Coordinator of the employee's department. The user task opens a dialog where the coordinator enters a workspace description: where it is located, etc. After the task is complete, the process writes a log message to the `WorkspaceRequest` entity and sends a notification to the employee with the workspace description.
+- If the work type is `Remote`, the process doesn't create any task for a Coordinator and goes straight to join with the System Administrator branch.
+- When tasks in both branches are finished, the process creates a user task for the HR Manager to check the completed request. The task just shows the _Workspace request editor_ screen again.
+- After the HR Manager completes the `Check request` task, the process ends.
 
 ## Demo Scenario
 

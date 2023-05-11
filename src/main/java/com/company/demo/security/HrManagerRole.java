@@ -10,11 +10,8 @@ import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-import javax.annotation.Nonnull;
-
-@Nonnull
 @ResourceRole(name = "HR Manager", code = HrManagerRole.CODE, scope = "UI")
-public interface HrManagerRole extends BpmProcessActorRole {
+public interface HrManagerRole extends BpmProcessActorRole, BasicAppRole {
 
     String CODE = "hr-manager";
 

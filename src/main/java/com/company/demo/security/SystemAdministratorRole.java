@@ -10,11 +10,8 @@ import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-import javax.annotation.Nonnull;
-
-@Nonnull
-@ResourceRole(name = "SystemAdministrator", code = SystemAdministratorRole.CODE, scope = "UI")
-public interface SystemAdministratorRole extends BpmProcessActorRole {
+@ResourceRole(name = "System Administrator", code = SystemAdministratorRole.CODE, scope = "UI")
+public interface SystemAdministratorRole extends BpmProcessActorRole, BasicAppRole {
 
     String CODE = "system-administrator";
 

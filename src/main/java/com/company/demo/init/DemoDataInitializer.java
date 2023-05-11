@@ -3,6 +3,7 @@ package com.company.demo.init;
 import com.company.demo.entity.Department;
 import com.company.demo.entity.Software;
 import com.company.demo.entity.User;
+import com.company.demo.security.BasicAppRole;
 import com.company.demo.security.CoordinatorRole;
 import com.company.demo.security.HrManagerRole;
 import com.company.demo.security.SystemAdministratorRole;
@@ -178,6 +179,9 @@ public class DemoDataInitializer {
     }
 
     private String getUserRole(User user) {
+        if (user.getUsername().equals("susan"))
+            return BasicAppRole.CODE;
+
         if (user.getUsername().equals("alice"))
             return HrManagerRole.CODE;
 
