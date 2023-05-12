@@ -29,7 +29,7 @@ public class ProcessLogService {
     }
 
     private String getTimeStamp() {
-        return "[" + timeSource.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + "] ";
+        return "[" + timeSource.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "] ";
     }
 
     private static String getCurrentProcessLog(WorkspaceRequest request) {

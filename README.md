@@ -46,7 +46,7 @@ Below is a brief description of the [business process](doc/workspace-preparation
 3. Login as `bob` with password `1`. You are a system administrator and you can grant permissions to software systems.
    1. Open _BPM -> My tasks_
    2. Select `Grant system permissions` in the left panel and double-click the task in the right panel
-   3. Create a few software request items in the _Workspace request editor_ window, then click _OK_
+   3. In the _Workspace request editor_ window, create a few software request items. In the edit screen of each item, select a software system and tick the _Permission granted_ checkbox. Then click _OK_ in _Workspace request editor_ window.
 4. Login as `linda` with password `1`. You are a coordinator and you can allocate physical workspace for office workers.
    1. Open _BPM -> My tasks_
    2. Select `Allocate workspace` in the left panel and double-click the task in the right panel
