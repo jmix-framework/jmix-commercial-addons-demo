@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:flowable="http://flowable.org/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <collaboration id="Collaboration_0lejmot">
+    <participant id="Participant_0xxx6mh" name="Job workspace preparation" processRef="workspace-preparation" />
+  </collaboration>
+  <process id="workspace-preparation" name="Workspace preparation" isExecutable="true">
+    <laneSet id="LaneSet_1alsy1y">
+      <lane id="Lane_16n9076" name="HR Manager">
+        <extensionElements>
+          <jmix:assignmentDetails assigneeSource="processVariable" assigneeValue="initiator" assignee="${initiator.username}" candidateUsersSource="users" candidateGroups="hr-managers" candidateGroupsValue="hr-managers" candidateGroupsSource="userGroups" />
+        </extensionElements>
+        <flowNodeRef>Gateway_10ctlwf</flowNodeRef>
+        <flowNodeRef>Gateway_0elofn7</flowNodeRef>
+        <flowNodeRef>Activity_17epkjc</flowNodeRef>
+        <flowNodeRef>Gateway_02izmx8</flowNodeRef>
+        <flowNodeRef>startEvent1</flowNodeRef>
+        <flowNodeRef>Event_0d1yy4f</flowNodeRef>
+      </lane>
+      <lane id="Lane_039sbvd" name="Coordinator">
+        <extensionElements>
+          <jmix:assignmentDetails assigneeSource="expression" assigneeValue="${employee.department.coordinator.username}" assignee="${employee.department.coordinator.username}" candidateUsersSource="users" candidateGroups="" candidateGroupsValue="" candidateGroupsSource="userGroups" />
+        </extensionElements>
+        <flowNodeRef>Activity_0wr73hp</flowNodeRef>
+        <flowNodeRef>Activity_1rgvu11</flowNodeRef>
+        <flowNodeRef>Activity_0qe0uua</flowNodeRef>
+      </lane>
+      <lane id="Lane_0yn8uul" name="System administrator">
+        <extensionElements>
+          <jmix:assignmentDetails assigneeSource="expression" candidateUsersSource="users" candidateGroups="system-administrators" candidateGroupsValue="system-administrators" candidateGroupsSource="userGroups" />
+        </extensionElements>
+        <flowNodeRef>Activity_16ez9az</flowNodeRef>
+        <flowNodeRef>Activity_0u1qxf5</flowNodeRef>
+        <flowNodeRef>Activity_0hweoh7</flowNodeRef>
+      </lane>
+    </laneSet>
+    <parallelGateway id="Gateway_10ctlwf">
+      <incoming>Flow_0hwdgb7</incoming>
+      <outgoing>Flow_1kqfh5n</outgoing>
+      <outgoing>Flow_0kur78e</outgoing>
+    </parallelGateway>
+    <sequenceFlow id="Flow_0hwdgb7" sourceRef="startEvent1" targetRef="Gateway_10ctlwf">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_1kqfh5n" sourceRef="Gateway_10ctlwf" targetRef="Activity_16ez9az" />
+    <sequenceFlow id="Flow_0kur78e" sourceRef="Gateway_10ctlwf" targetRef="Gateway_0elofn7" />
+    <exclusiveGateway id="Gateway_0elofn7">
+      <incoming>Flow_0kur78e</incoming>
+      <outgoing>Flow_1ilszsf</outgoing>
+      <outgoing>Flow_0l2q6wy</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_1ilszsf" name="office" sourceRef="Gateway_0elofn7" targetRef="Activity_0wr73hp">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${workspaceRequest.workType.name() == 'OFFICE'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_0l2q6wy" name="remote" sourceRef="Gateway_0elofn7" targetRef="Gateway_02izmx8">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${workspaceRequest.workType.name() == 'REMOTE'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_0kt7hb8" sourceRef="Activity_0hweoh7" targetRef="Gateway_02izmx8" />
+    <userTask id="Activity_17epkjc" name="Check request">
+      <extensionElements>
+        <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="WorkspaceRequest.edit" />
+      </extensionElements>
+      <incoming>Flow_01crsyc</incoming>
+      <outgoing>Flow_1ysrzro</outgoing>
+    </userTask>
+    <inclusiveGateway id="Gateway_02izmx8">
+      <incoming>Flow_0l2q6wy</incoming>
+      <incoming>Flow_0kt7hb8</incoming>
+      <incoming>Flow_14avlbs</incoming>
+      <outgoing>Flow_01crsyc</outgoing>
+    </inclusiveGateway>
+    <sequenceFlow id="Flow_01crsyc" sourceRef="Gateway_02izmx8" targetRef="Activity_17epkjc" />
+    <sequenceFlow id="Flow_1ysrzro" sourceRef="Activity_17epkjc" targetRef="Event_0d1yy4f" />
+    <startEvent id="startEvent1" name="Create request">
+      <extensionElements>
+        <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="WorkspaceRequest.edit" />
+      </extensionElements>
+      <outgoing>Flow_0hwdgb7</outgoing>
+    </startEvent>
+    <intermediateThrowEvent id="Event_0d1yy4f" name="End">
+      <incoming>Flow_1ysrzro</incoming>
+    </intermediateThrowEvent>
+    <userTask id="Activity_0wr73hp" name="Allocate workspace">
+      <extensionElements>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="initiator" caption="Initiator" type="entity" editable="false" required="false">
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="entityName" value="User" />
+            </jmix:formField>
+            <jmix:formField id="date" caption="Date" type="localdate" editable="false" required="false" />
+            <jmix:formField id="employee" caption="Employee" type="entity" editable="false" required="false">
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+              <jmix:formFieldProperty name="entityName" value="User" />
+            </jmix:formField>
+            <jmix:formField id="workspaceDescription" caption="Workspace description" type="multilineString" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <incoming>Flow_1ilszsf</incoming>
+      <outgoing>Flow_0q4utjp</outgoing>
+    </userTask>
+    <serviceTask id="Activity_1rgvu11" name="Log workspace description" flowable:expression="${processLogService.logWorkspaceDescription(workspaceRequest, workspaceDescription)}" jmix:taskType="springBean" jmix:beanName="processLogService">
+      <extensionElements>
+        <jmix:springBean beanName="processLogService" methodName="logWorkspaceDescription">
+          <jmix:methodParam name="request" type="com.company.demo.entity.WorkspaceRequest" isVariable="true">workspaceRequest</jmix:methodParam>
+          <jmix:methodParam name="workspaceDescription" type="java.lang.String" isVariable="true">workspaceDescription</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_0q4utjp</incoming>
+      <outgoing>Flow_1hxs2qw</outgoing>
+    </serviceTask>
+    <serviceTask id="Activity_0qe0uua" name="Notify user about workspace" flowable:expression="${notificationService.notifyAboutWorkspace(employee, workspaceDescription)}" jmix:taskType="springBean" jmix:beanName="notificationService">
+      <extensionElements>
+        <jmix:springBean beanName="notificationService" methodName="notifyAboutWorkspace">
+          <jmix:methodParam name="user" type="com.company.demo.entity.User" isVariable="true">employee</jmix:methodParam>
+          <jmix:methodParam name="workspaceDescription" type="java.lang.String" isVariable="true">workspaceDescription</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_1hxs2qw</incoming>
+      <outgoing>Flow_14avlbs</outgoing>
+    </serviceTask>
+    <sequenceFlow id="Flow_0q4utjp" sourceRef="Activity_0wr73hp" targetRef="Activity_1rgvu11" />
+    <sequenceFlow id="Flow_1hxs2qw" sourceRef="Activity_1rgvu11" targetRef="Activity_0qe0uua" />
+    <userTask id="Activity_16ez9az" name="Grant system permissions">
+      <extensionElements>
+        <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="WorkspaceRequest.edit" />
+      </extensionElements>
+      <incoming>Flow_1kqfh5n</incoming>
+      <outgoing>Flow_18ikxmu</outgoing>
+    </userTask>
+    <serviceTask id="Activity_0u1qxf5" name="Log permissions granted" flowable:expression="${processLogService.logSoftwarePermissionsGranted(workspaceRequest)}" jmix:taskType="springBean" jmix:beanName="processLogService">
+      <extensionElements>
+        <jmix:springBean beanName="processLogService" methodName="logSoftwarePermissionsGranted">
+          <jmix:methodParam name="request" type="com.company.demo.entity.WorkspaceRequest" isVariable="true">workspaceRequest</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_18ikxmu</incoming>
+      <outgoing>Flow_116exwz</outgoing>
+    </serviceTask>
+    <serviceTask id="Activity_0hweoh7" name="Notify user about permissions" flowable:expression="${notificationService.notifyAboutPermissions(workspaceRequest, employee)}" jmix:taskType="springBean" jmix:beanName="notificationService">
+      <extensionElements>
+        <jmix:springBean beanName="notificationService" methodName="notifyAboutPermissions">
+          <jmix:methodParam name="request" type="com.company.demo.entity.WorkspaceRequest" isVariable="true">workspaceRequest</jmix:methodParam>
+          <jmix:methodParam name="user" type="com.company.demo.entity.User" isVariable="true">employee</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_116exwz</incoming>
+      <outgoing>Flow_0kt7hb8</outgoing>
+    </serviceTask>
+    <sequenceFlow id="Flow_18ikxmu" sourceRef="Activity_16ez9az" targetRef="Activity_0u1qxf5" />
+    <sequenceFlow id="Flow_116exwz" sourceRef="Activity_0u1qxf5" targetRef="Activity_0hweoh7" />
+    <sequenceFlow id="Flow_14avlbs" sourceRef="Activity_0qe0uua" targetRef="Gateway_02izmx8">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="Collaboration_0lejmot">
+      <bpmndi:BPMNShape id="Participant_0xxx6mh_di" bpmnElement="Participant_0xxx6mh" isHorizontal="true">
+        <omgdc:Bounds x="340" y="103" width="1070" height="647" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0yn8uul_di" bpmnElement="Lane_0yn8uul" isHorizontal="true">
+        <omgdc:Bounds x="370" y="540" width="1040" height="210" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_039sbvd_di" bpmnElement="Lane_039sbvd" isHorizontal="true">
+        <omgdc:Bounds x="370" y="360" width="1040" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_16n9076_di" bpmnElement="Lane_16n9076" isHorizontal="true">
+        <omgdc:Bounds x="370" y="103" width="1040" height="257" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ysrzro_di" bpmnElement="Flow_1ysrzro">
+        <di:waypoint x="1290" y="230" />
+        <di:waypoint x="1342" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01crsyc_di" bpmnElement="Flow_01crsyc">
+        <di:waypoint x="1135" y="230" />
+        <di:waypoint x="1190" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kt7hb8_di" bpmnElement="Flow_0kt7hb8">
+        <di:waypoint x="990" y="640" />
+        <di:waypoint x="1110" y="640" />
+        <di:waypoint x="1110" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l2q6wy_di" bpmnElement="Flow_0l2q6wy">
+        <di:waypoint x="725" y="230" />
+        <di:waypoint x="1085" y="230" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="888" y="212" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ilszsf_di" bpmnElement="Flow_1ilszsf">
+        <di:waypoint x="700" y="255" />
+        <di:waypoint x="700" y="420" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="706" y="259" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kur78e_di" bpmnElement="Flow_0kur78e">
+        <di:waypoint x="605" y="230" />
+        <di:waypoint x="675" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kqfh5n_di" bpmnElement="Flow_1kqfh5n">
+        <di:waypoint x="580" y="255" />
+        <di:waypoint x="580" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hwdgb7_di" bpmnElement="Flow_0hwdgb7">
+        <di:waypoint x="465" y="230" />
+        <di:waypoint x="555" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q4utjp_di" bpmnElement="Flow_0q4utjp">
+        <di:waypoint x="750" y="460" />
+        <di:waypoint x="800" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hxs2qw_di" bpmnElement="Flow_1hxs2qw">
+        <di:waypoint x="900" y="460" />
+        <di:waypoint x="950" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18ikxmu_di" bpmnElement="Flow_18ikxmu">
+        <di:waypoint x="630" y="640" />
+        <di:waypoint x="750" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_116exwz_di" bpmnElement="Flow_116exwz">
+        <di:waypoint x="850" y="640" />
+        <di:waypoint x="890" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14avlbs_di" bpmnElement="Flow_14avlbs">
+        <di:waypoint x="1000" y="420" />
+        <di:waypoint x="1000" y="330" />
+        <di:waypoint x="1097" y="242" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_1vh7t3m_di" bpmnElement="Gateway_10ctlwf">
+        <omgdc:Bounds x="555" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0elofn7_di" bpmnElement="Gateway_0elofn7" isMarkerVisible="true">
+        <omgdc:Bounds x="675" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gx7ewl_di" bpmnElement="Activity_17epkjc">
+        <omgdc:Bounds x="1190" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1iky0vx_di" bpmnElement="Gateway_02izmx8">
+        <omgdc:Bounds x="1085" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="435" y="215" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="414" y="252" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0d1yy4f_di" bpmnElement="Event_0d1yy4f">
+        <omgdc:Bounds x="1342" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1350" y="255" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08nlagp_di" bpmnElement="Activity_0wr73hp">
+        <omgdc:Bounds x="650" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0eeptyu_di" bpmnElement="Activity_1rgvu11">
+        <omgdc:Bounds x="800" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jckjjj_di" bpmnElement="Activity_0qe0uua">
+        <omgdc:Bounds x="950" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07vob1t_di" bpmnElement="Activity_16ez9az">
+        <omgdc:Bounds x="530" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ie5o0d_di" bpmnElement="Activity_0u1qxf5">
+        <omgdc:Bounds x="750" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0386bco_di" bpmnElement="Activity_0hweoh7">
+        <omgdc:Bounds x="890" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

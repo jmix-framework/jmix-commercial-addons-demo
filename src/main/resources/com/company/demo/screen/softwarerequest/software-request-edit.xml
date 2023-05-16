@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://softwareRequestEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="softwareRequestDc"
+                  class="com.company.demo.entity.SoftwareRequest">
+            <fetchPlan extends="_base">
+                <property name="software" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+        </instance>
+        <collection id="softwareDc" class="com.company.demo.entity.Software">
+            <fetchPlan extends="_base"/>
+            <loader id="softwareDl">
+                <query>
+                    <![CDATA[select e from Software e
+                    order by e.name asc]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <screenSettings id="settingsFacet" auto="true"/>
+    </facets>
+    <actions>
+        <action id="windowCommitAndClose" caption="msg:///actions.Ok"
+                icon="EDITOR_OK"
+                primary="true"
+                shortcut="${COMMIT_SHORTCUT}"/>
+        <action id="windowClose"
+                caption="msg:///actions.Close"
+                icon="EDITOR_CANCEL"/>
+    </actions>
+    <dialogMode height="-1"
+                width="-1" resizable="true"/>
+    <layout spacing="true" expand="editActions">
+        <form id="form" dataContainer="softwareRequestDc">
+            <column width="350px">
+                <entityComboBox id="softwareField" property="software" optionsContainer="softwareDc">
+                    <actions>
+                        <action id="entityLookup" type="entity_lookup"/>
+                        <action id="entityClear" type="entity_clear"/>
+                    </actions>
+                </entityComboBox>
+                <checkBox id="permissionGrantedField" property="permissionGranted"/>
+            </column>
+        </form>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

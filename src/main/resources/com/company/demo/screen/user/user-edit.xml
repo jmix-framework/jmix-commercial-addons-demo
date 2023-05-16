@@ -5,9 +5,20 @@
     <data>
         <instance id="userDc"
                   class="com.company.demo.entity.User">
-            <fetchPlan extends="_base"/>
+            <fetchPlan extends="_base">
+                <property name="department" fetchPlan="_base"/>
+            </fetchPlan>
             <loader/>
         </instance>
+        <collection id="departmentsDc" class="com.company.demo.entity.Department">
+            <fetchPlan extends="_base"/>
+            <loader id="departmentsDl">
+                <query>
+                    <![CDATA[select e from Department e
+                    order by e.name asc]]>
+                </query>
+            </loader>
+        </collection>
     </data>
     <actions>
         <action id="windowCommitAndClose"
@@ -41,6 +52,8 @@
                 <textField id="emailField" property="email"/>
                 <comboBox id="timeZoneField" property="timeZoneId"/>
                 <checkBox id="activeField" property="active"/>
+                <entityComboBox id="departmentField" property="department"
+                                optionsContainer="departmentsDc"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">
