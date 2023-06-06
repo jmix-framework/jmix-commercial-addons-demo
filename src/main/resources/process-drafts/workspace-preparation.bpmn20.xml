@@ -12,9 +12,10 @@
         <flowNodeRef>Gateway_10ctlwf</flowNodeRef>
         <flowNodeRef>Gateway_0elofn7</flowNodeRef>
         <flowNodeRef>Activity_17epkjc</flowNodeRef>
-        <flowNodeRef>Gateway_02izmx8</flowNodeRef>
         <flowNodeRef>startEvent1</flowNodeRef>
         <flowNodeRef>Event_0d1yy4f</flowNodeRef>
+        <flowNodeRef>Gateway_02izmx8</flowNodeRef>
+        <flowNodeRef>Gateway_0916gav</flowNodeRef>
       </lane>
       <lane id="Lane_039sbvd" name="Coordinator">
         <extensionElements>
@@ -45,7 +46,7 @@
     </sequenceFlow>
     <sequenceFlow id="Flow_1kqfh5n" sourceRef="Gateway_10ctlwf" targetRef="Activity_16ez9az" />
     <sequenceFlow id="Flow_0kur78e" sourceRef="Gateway_10ctlwf" targetRef="Gateway_0elofn7" />
-    <exclusiveGateway id="Gateway_0elofn7">
+    <exclusiveGateway id="Gateway_0elofn7" default="Flow_0l2q6wy">
       <incoming>Flow_0kur78e</incoming>
       <outgoing>Flow_1ilszsf</outgoing>
       <outgoing>Flow_0l2q6wy</outgoing>
@@ -56,27 +57,13 @@
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression">${workspaceRequest.workType.name() == 'OFFICE'}</conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="Flow_0l2q6wy" name="remote" sourceRef="Gateway_0elofn7" targetRef="Gateway_02izmx8">
-      <extensionElements>
-        <jmix:conditionDetails conditionSource="expression" />
-      </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression">${workspaceRequest.workType.name() == 'REMOTE'}</conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="Flow_0kt7hb8" sourceRef="Activity_0hweoh7" targetRef="Gateway_02izmx8" />
     <userTask id="Activity_17epkjc" name="Check request">
       <extensionElements>
         <jmix:formData type="jmix-screen" openMode="DIALOG" screenId="WorkspaceRequest.edit" />
       </extensionElements>
-      <incoming>Flow_01crsyc</incoming>
+      <incoming>Flow_13rw5jb</incoming>
       <outgoing>Flow_1ysrzro</outgoing>
     </userTask>
-    <inclusiveGateway id="Gateway_02izmx8">
-      <incoming>Flow_0l2q6wy</incoming>
-      <incoming>Flow_0kt7hb8</incoming>
-      <incoming>Flow_14avlbs</incoming>
-      <outgoing>Flow_01crsyc</outgoing>
-    </inclusiveGateway>
-    <sequenceFlow id="Flow_01crsyc" sourceRef="Gateway_02izmx8" targetRef="Activity_17epkjc" />
     <sequenceFlow id="Flow_1ysrzro" sourceRef="Activity_17epkjc" targetRef="Event_0d1yy4f" />
     <startEvent id="startEvent1" name="Create request">
       <extensionElements>
@@ -125,7 +112,7 @@
         </jmix:springBean>
       </extensionElements>
       <incoming>Flow_1hxs2qw</incoming>
-      <outgoing>Flow_14avlbs</outgoing>
+      <outgoing>Flow_1aqoqhi</outgoing>
     </serviceTask>
     <sequenceFlow id="Flow_0q4utjp" sourceRef="Activity_0wr73hp" targetRef="Activity_1rgvu11" />
     <sequenceFlow id="Flow_1hxs2qw" sourceRef="Activity_1rgvu11" targetRef="Activity_0qe0uua" />
@@ -153,15 +140,37 @@
         </jmix:springBean>
       </extensionElements>
       <incoming>Flow_116exwz</incoming>
-      <outgoing>Flow_0kt7hb8</outgoing>
+      <outgoing>Flow_034f4ua</outgoing>
     </serviceTask>
     <sequenceFlow id="Flow_18ikxmu" sourceRef="Activity_16ez9az" targetRef="Activity_0u1qxf5" />
     <sequenceFlow id="Flow_116exwz" sourceRef="Activity_0u1qxf5" targetRef="Activity_0hweoh7" />
-    <sequenceFlow id="Flow_14avlbs" sourceRef="Activity_0qe0uua" targetRef="Gateway_02izmx8">
+    <sequenceFlow id="Flow_0l2q6wy" name="remote" sourceRef="Gateway_0elofn7" targetRef="Gateway_02izmx8">
       <extensionElements>
         <jmix:conditionDetails conditionSource="expression" />
       </extensionElements>
     </sequenceFlow>
+    <exclusiveGateway id="Gateway_02izmx8" default="Flow_1c8rqwl">
+      <incoming>Flow_0l2q6wy</incoming>
+      <incoming>Flow_1aqoqhi</incoming>
+      <outgoing>Flow_1c8rqwl</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_1aqoqhi" sourceRef="Activity_0qe0uua" targetRef="Gateway_02izmx8">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_1c8rqwl" sourceRef="Gateway_02izmx8" targetRef="Gateway_0916gav">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_13rw5jb" sourceRef="Gateway_0916gav" targetRef="Activity_17epkjc" />
+    <sequenceFlow id="Flow_034f4ua" sourceRef="Activity_0hweoh7" targetRef="Gateway_0916gav" />
+    <parallelGateway id="Gateway_0916gav">
+      <incoming>Flow_1c8rqwl</incoming>
+      <incoming>Flow_034f4ua</incoming>
+      <outgoing>Flow_13rw5jb</outgoing>
+    </parallelGateway>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process">
     <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="Collaboration_0lejmot">
@@ -177,25 +186,49 @@
       <bpmndi:BPMNShape id="Lane_16n9076_di" bpmnElement="Lane_16n9076" isHorizontal="true">
         <omgdc:Bounds x="370" y="103" width="1040" height="257" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1ysrzro_di" bpmnElement="Flow_1ysrzro">
-        <di:waypoint x="1290" y="230" />
-        <di:waypoint x="1342" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_01crsyc_di" bpmnElement="Flow_01crsyc">
-        <di:waypoint x="1135" y="230" />
-        <di:waypoint x="1190" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0kt7hb8_di" bpmnElement="Flow_0kt7hb8">
+      <bpmndi:BPMNEdge id="Flow_034f4ua_di" bpmnElement="Flow_034f4ua">
         <di:waypoint x="990" y="640" />
         <di:waypoint x="1110" y="640" />
         <di:waypoint x="1110" y="255" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13rw5jb_di" bpmnElement="Flow_13rw5jb">
+        <di:waypoint x="1135" y="230" />
+        <di:waypoint x="1190" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c8rqwl_di" bpmnElement="Flow_1c8rqwl">
+        <di:waypoint x="1025" y="230" />
+        <di:waypoint x="1085" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aqoqhi_di" bpmnElement="Flow_1aqoqhi">
+        <di:waypoint x="1000" y="420" />
+        <di:waypoint x="1000" y="255" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0l2q6wy_di" bpmnElement="Flow_0l2q6wy">
         <di:waypoint x="725" y="230" />
-        <di:waypoint x="1085" y="230" />
+        <di:waypoint x="975" y="230" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="888" y="212" width="35" height="14" />
+          <omgdc:Bounds x="833" y="212" width="35" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_116exwz_di" bpmnElement="Flow_116exwz">
+        <di:waypoint x="850" y="640" />
+        <di:waypoint x="890" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18ikxmu_di" bpmnElement="Flow_18ikxmu">
+        <di:waypoint x="630" y="640" />
+        <di:waypoint x="750" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hxs2qw_di" bpmnElement="Flow_1hxs2qw">
+        <di:waypoint x="900" y="460" />
+        <di:waypoint x="950" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q4utjp_di" bpmnElement="Flow_0q4utjp">
+        <di:waypoint x="750" y="460" />
+        <di:waypoint x="800" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ysrzro_di" bpmnElement="Flow_1ysrzro">
+        <di:waypoint x="1290" y="230" />
+        <di:waypoint x="1342" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ilszsf_di" bpmnElement="Flow_1ilszsf">
         <di:waypoint x="700" y="255" />
@@ -216,27 +249,6 @@
         <di:waypoint x="465" y="230" />
         <di:waypoint x="555" y="230" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0q4utjp_di" bpmnElement="Flow_0q4utjp">
-        <di:waypoint x="750" y="460" />
-        <di:waypoint x="800" y="460" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1hxs2qw_di" bpmnElement="Flow_1hxs2qw">
-        <di:waypoint x="900" y="460" />
-        <di:waypoint x="950" y="460" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_18ikxmu_di" bpmnElement="Flow_18ikxmu">
-        <di:waypoint x="630" y="640" />
-        <di:waypoint x="750" y="640" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_116exwz_di" bpmnElement="Flow_116exwz">
-        <di:waypoint x="850" y="640" />
-        <di:waypoint x="890" y="640" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_14avlbs_di" bpmnElement="Flow_14avlbs">
-        <di:waypoint x="1000" y="420" />
-        <di:waypoint x="1000" y="330" />
-        <di:waypoint x="1097" y="242" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_1vh7t3m_di" bpmnElement="Gateway_10ctlwf">
         <omgdc:Bounds x="555" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -245,9 +257,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0gx7ewl_di" bpmnElement="Activity_17epkjc">
         <omgdc:Bounds x="1190" y="190" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1iky0vx_di" bpmnElement="Gateway_02izmx8">
-        <omgdc:Bounds x="1085" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
         <omgdc:Bounds x="435" y="215" width="30" height="30" />
@@ -278,6 +287,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0386bco_di" bpmnElement="Activity_0hweoh7">
         <omgdc:Bounds x="890" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0w4t7r4_di" bpmnElement="Gateway_02izmx8" isMarkerVisible="true">
+        <omgdc:Bounds x="975" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1grqm5g_di" bpmnElement="Gateway_0916gav">
+        <omgdc:Bounds x="1085" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
