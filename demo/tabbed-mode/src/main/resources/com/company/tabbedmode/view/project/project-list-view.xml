@@ -31,10 +31,14 @@
             <properties include=".*"/>
         </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="projectsDataGrid.createAction"/>
-            <button id="editButton" action="projectsDataGrid.editAction"/>
-            <button id="removeButton" action="projectsDataGrid.removeAction"/>
-            <simplePagination id="pagination" dataLoader="projectsDl"/>
+            <startSlot>
+                <button id="createButton" action="projectsDataGrid.createAction"/>
+                <button id="editButton" action="projectsDataGrid.editAction"/>
+                <button id="removeButton" action="projectsDataGrid.removeAction"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="projectsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="projectsDataGrid"
                   width="100%"

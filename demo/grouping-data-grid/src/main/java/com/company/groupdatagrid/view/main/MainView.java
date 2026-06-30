@@ -62,9 +62,7 @@ public class MainView extends StandardMainView {
 
     @Install(to = "userMenu", subject = "headerRenderer")
     private Component userMenuHeaderRenderer(final UserDetails userDetails) {
-        User user = (User) userDetails;
-
-        if (user == null) {
+        if (!(userDetails instanceof User user)) {
             return null;
         }
 
@@ -74,7 +72,7 @@ public class MainView extends StandardMainView {
         String name = generateUserName(user);
 
         Avatar avatar = createAvatar(name);
-        avatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
+        avatar.addThemeVariants(AvatarVariant.LARGE);
 
         Span text = uiComponents.create(Span.class);
         text.setText(name);

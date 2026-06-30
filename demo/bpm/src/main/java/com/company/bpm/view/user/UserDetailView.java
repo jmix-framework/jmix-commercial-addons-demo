@@ -3,9 +3,12 @@ package com.company.bpm.view.user;
 import com.company.bpm.entity.User;
 import com.company.bpm.view.main.MainView;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.EntityStates;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +32,17 @@ public class UserDetailView extends StandardDetailView<User> {
     private PasswordField confirmPasswordField;
     @ViewComponent
     private ComboBox<String> timeZoneField;
-
-    @Autowired
-    private EntityStates entityStates;
     @ViewComponent
     private MessageBundle messageBundle;
     @Autowired
+    private Notifications notifications;
+
+    @Autowired
+    private EntityStates entityStates;
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private boolean newEntity;
 
     @Subscribe
     public void onInit(final InitEvent event) {
@@ -65,9 +72,23 @@ public class UserDetailView extends StandardDetailView<User> {
     }
 
     @Subscribe
-    protected void onBeforeSave(final BeforeSaveEvent event) {
+    public void onBeforeSave(final BeforeSaveEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             getEditedEntity().setPassword(passwordEncoder.encode(passwordField.getValue()));
+
+            newEntity = true;
+        }
+    }
+
+    @Subscribe
+    public void onAfterSave(final AfterSaveEvent event) {
+        if (newEntity) {
+            notifications.create(messageBundle.getMessage("noAssignedRolesNotification"))
+                    .withThemeVariant(NotificationVariant.WARNING)
+                    .withPosition(Notification.Position.TOP_END)
+                    .show();
+
+            newEntity = false;
         }
     }
 }

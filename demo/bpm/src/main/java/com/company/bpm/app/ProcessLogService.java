@@ -20,12 +20,12 @@ public class ProcessLogService {
 
     public void logWorkspaceDescription(WorkspaceRequest request, String workspaceDescription) {
         request.setProcessLog(getCurrentProcessLog(request) + getTimeStamp() + "Workspace description: " + workspaceDescription);
-        dataManager.save(request);
+        dataManager.saveWithoutReload(request);
     }
 
     public void logSoftwarePermissionsGranted(WorkspaceRequest request) {
         request.setProcessLog(getCurrentProcessLog(request) + getTimeStamp() + "Software permissions granted");
-        dataManager.save(request);
+        dataManager.saveWithoutReload(request);
     }
 
     private String getTimeStamp() {

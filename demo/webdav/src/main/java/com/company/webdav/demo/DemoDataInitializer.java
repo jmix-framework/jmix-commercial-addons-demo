@@ -80,7 +80,7 @@ public class DemoDataInitializer {
         article.setDescription("Employee Onboarding Guide");
         article.setDepartment(departments.get(0));
         article.setWebdavDocument(webdavDocument);
-        dataManager.save(article);
+        dataManager.saveWithoutReload(article);
 
         webdavDocument = webdavDocumentsManagementService.createVersioningDocumentByFileRef(
                 uploadFile("HR_Leave_Tracker.xlsx"));
@@ -88,7 +88,7 @@ public class DemoDataInitializer {
         article.setDescription("Leave Tracker");
         article.setDepartment(departments.get(0));
         article.setWebdavDocument(webdavDocument);
-        dataManager.save(article);
+        dataManager.saveWithoutReload(article);
 
         webdavDocument = webdavDocumentsManagementService.createVersioningDocumentByFileRef(
                 uploadFile("Marketing_Brand_Guidelines.docx"));
@@ -96,7 +96,7 @@ public class DemoDataInitializer {
         article.setDescription("Brand Guidelines");
         article.setDepartment(departments.get(1));
         article.setWebdavDocument(webdavDocument);
-        dataManager.save(article);
+        dataManager.saveWithoutReload(article);
 
         webdavDocument = webdavDocumentsManagementService.createVersioningDocumentByFileRef(
                 uploadFile("Marketing_Campaign_Performance.xlsx"));
@@ -104,7 +104,7 @@ public class DemoDataInitializer {
         article.setDescription("Campaign Performance");
         article.setDepartment(departments.get(1));
         article.setWebdavDocument(webdavDocument);
-        dataManager.save(article);
+        dataManager.saveWithoutReload(article);
 
         webdavDocument = webdavDocumentsManagementService.createVersioningDocumentByFileRef(
                 uploadFile("Operations_Inventory_Tracker.xlsx"));
@@ -112,7 +112,7 @@ public class DemoDataInitializer {
         article.setDescription("Inventory Tracker");
         article.setDepartment(departments.get(2));
         article.setWebdavDocument(webdavDocument);
-        dataManager.save(article);
+        dataManager.saveWithoutReload(article);
 
         webdavDocument = webdavDocumentsManagementService.createVersioningDocumentByFileRef(
                 uploadFile("Operations_Vendor_Management_SOP.docx"));
@@ -120,7 +120,7 @@ public class DemoDataInitializer {
         article.setDescription("Vendor Management SOP");
         article.setDepartment(departments.get(2));
         article.setWebdavDocument(webdavDocument);
-        dataManager.save(article);
+        dataManager.saveWithoutReload(article);
     }
 
     private FileRef uploadFile(String fileName) {
@@ -185,13 +185,13 @@ public class DemoDataInitializer {
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode("ui-minimal");
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
 
             roleAssignment = dataManager.create(RoleAssignmentEntity.class);
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode("employee");
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
         }
     }
 }

@@ -45,7 +45,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("Robert");
         user.setLastName("Taylor");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         return list;
@@ -59,19 +59,19 @@ public class DemoDataInitializer {
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode(UiMinimalRole.CODE);
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
 
             roleAssignment = dataManager.create(RoleAssignmentEntity.class);
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode(EmployeeRole.CODE);
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
 
             roleAssignment = dataManager.create(RoleAssignmentEntity.class);
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode("adhoc-employee-role");
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
         }
     }
 
@@ -80,19 +80,19 @@ public class DemoDataInitializer {
         customer1.setName("Horizon Technologies Inc.");
         customer1.setEmail("contact@horizontech.com");
         customer1.setComments("Enterprise client since 2018. Interested in expanding their license for the new department. Follow up in Q3.");
-        dataManager.save(customer1);
+        dataManager.saveWithoutReload(customer1);
 
         Customer customer2 = dataManager.create(Customer.class);
         customer2.setName("Pinnacle Solutions Group");
         customer2.setEmail("info@pinnaclesg.com");
         customer2.setComments("Small business client. Had technical issues with the latest update - resolved on 2023-05-15. Regular maintenance contract.");
-        dataManager.save(customer2);
+        dataManager.saveWithoutReload(customer2);
 
         Customer customer3 = dataManager.create(Customer.class);
         customer3.setName("Evergreen Manufacturing Ltd.");
         customer3.setEmail("support@evergreenmanuf.com");
         customer3.setComments("International client. Requires special pricing considerations. Has multiple deployment environments.");
-        dataManager.save(customer3);
+        dataManager.saveWithoutReload(customer3);
     }
 
     private String createPassword() {

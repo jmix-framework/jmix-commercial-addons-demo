@@ -1,0 +1,5 @@
+/* Define your styles here */
+
+.user-picture {
+    object-fit: contain;
+}

@@ -127,7 +127,7 @@ public class DemoDataInitializer {
         dataManager.save(saveContext);
 
         operationsDept.setCoordinator(user);
-        dataManager.save(operationsDept);
+        dataManager.saveWithoutReload(operationsDept);
 
         saveContext = new SaveContext();
         user = dataManager.create(User.class);
@@ -151,7 +151,7 @@ public class DemoDataInitializer {
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode(UiMinimalRole.CODE);
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
 
             String roleCode = getUserRole(user);
             if (roleCode != null) {
@@ -159,7 +159,7 @@ public class DemoDataInitializer {
                 roleAssignment.setUsername(user.getUsername());
                 roleAssignment.setRoleCode(roleCode);
                 roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-                dataManager.save(roleAssignment);
+                dataManager.saveWithoutReload(roleAssignment);
             }
         }
     }
@@ -192,7 +192,7 @@ public class DemoDataInitializer {
         userGroupRole.setUserGroup(userGroup);
         userGroupRole.setRoleCode(HrManagerRole.CODE);
 
-        dataManager.save(userGroup, userGroupRole);
+        dataManager.saveWithoutReload(userGroup, userGroupRole);
 
         userGroup = dataManager.create(UserGroup.class);
         userGroup.setName("System Administrators");
@@ -202,7 +202,7 @@ public class DemoDataInitializer {
         userGroupRole.setUserGroup(userGroup);
         userGroupRole.setRoleCode(SystemAdministratorRole.CODE);
 
-        dataManager.save(userGroup, userGroupRole);
+        dataManager.saveWithoutReload(userGroup, userGroupRole);
     }
 
     private String createPassword() {

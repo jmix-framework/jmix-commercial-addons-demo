@@ -1,0 +1,8 @@
+/* Define your styles here */
+.jmix-main-view-header > #ntfIndicator {
+    margin-inline-start: auto;
+}
+
+.jmix-main-view-user-menu {
+    margin-inline-start: unset;
+}

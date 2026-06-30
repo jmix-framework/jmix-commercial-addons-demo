@@ -43,7 +43,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("Alice");
         user.setLastName("Brown");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -51,7 +51,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("James");
         user.setLastName("Wilson");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -59,7 +59,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("Mary");
         user.setLastName("Jones");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -67,7 +67,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("Linda");
         user.setLastName("Evans");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -75,7 +75,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("Susan");
         user.setLastName("Baker");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -83,7 +83,7 @@ public class DemoDataInitializer {
         user.setPassword(createPassword());
         user.setFirstName("Robert");
         user.setLastName("Taylor");
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         return list;
@@ -99,7 +99,7 @@ public class DemoDataInitializer {
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode(FullAccessRole.CODE);
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
         }
     }
 
@@ -137,6 +137,6 @@ public class DemoDataInitializer {
         task.setDescription(description);
         task.setStatus(TaskStatus.ACTIVE);
         task.setProject(project);
-        dataManager.save(task);
+        dataManager.saveWithoutReload(task);
     }
 }

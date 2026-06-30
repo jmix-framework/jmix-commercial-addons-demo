@@ -36,11 +36,15 @@
             </hbox>
         </details>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="articlesDataGrid.createAction"/>
-            <button id="editButton" action="articlesDataGrid.editAction"/>
-            <button id="removeButton" action="articlesDataGrid.removeAction"/>
-            <button id="refreshButton" action="articlesDataGrid.refreshAction"/>
-            <simplePagination id="pagination" dataLoader="articlesDl"/>
+            <startSlot>
+                <button id="createButton" action="articlesDataGrid.createAction"/>
+                <button id="editButton" action="articlesDataGrid.editAction"/>
+                <button id="removeButton" action="articlesDataGrid.removeAction"/>
+                <button id="refreshButton" action="articlesDataGrid.refreshAction"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="articlesDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="articlesDataGrid"
                   width="100%"

@@ -26,10 +26,14 @@
     </actions>
     <layout>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="departmentsDataGrid.createAction"/>
-            <button id="editButton" action="departmentsDataGrid.editAction"/>
-            <button id="removeButton" action="departmentsDataGrid.removeAction"/>
-            <simplePagination id="pagination" dataLoader="departmentsDl"/>
+            <startSlot>
+                <button id="createButton" action="departmentsDataGrid.createAction"/>
+                <button id="editButton" action="departmentsDataGrid.editAction"/>
+                <button id="removeButton" action="departmentsDataGrid.removeAction"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="departmentsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="departmentsDataGrid"
                   width="100%"

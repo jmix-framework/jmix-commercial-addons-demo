@@ -56,7 +56,7 @@ public class DemoDataInitializer {
         user.setFirstName("Alice");
         user.setLastName("Brown");
         user.setPicture(uploadPicture("com/company/kanban/demo/", "alice.png"));
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -65,7 +65,7 @@ public class DemoDataInitializer {
         user.setFirstName("James");
         user.setLastName("Wilson");
         user.setPicture(uploadPicture("com/company/kanban/demo/", "james.png"));
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -74,7 +74,7 @@ public class DemoDataInitializer {
         user.setFirstName("Mary");
         user.setLastName("Jones");
         user.setPicture(uploadPicture("com/company/kanban/demo/", "mary.png"));
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -83,7 +83,7 @@ public class DemoDataInitializer {
         user.setFirstName("Linda");
         user.setLastName("Evans");
         user.setPicture(uploadPicture("com/company/kanban/demo/", "linda.png"));
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -92,7 +92,7 @@ public class DemoDataInitializer {
         user.setFirstName("Susan");
         user.setLastName("Baker");
         user.setPicture(uploadPicture("com/company/kanban/demo/", "susan.png"));
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         user = dataManager.create(User.class);
@@ -101,7 +101,7 @@ public class DemoDataInitializer {
         user.setFirstName("Robert");
         user.setLastName("Taylor");
         user.setPicture(uploadPicture("com/company/kanban/demo/", "bob.png"));
-        dataManager.save(user);
+        dataManager.saveWithoutReload(user);
         list.add(user);
 
         return list;
@@ -126,7 +126,7 @@ public class DemoDataInitializer {
             roleAssignment.setUsername(user.getUsername());
             roleAssignment.setRoleCode(FullAccessRole.CODE);
             roleAssignment.setRoleType(RoleAssignmentRoleType.RESOURCE);
-            dataManager.save(roleAssignment);
+            dataManager.saveWithoutReload(roleAssignment);
         }
     }
 
@@ -144,7 +144,7 @@ public class DemoDataInitializer {
                 task1.setProgress(100);
                 task1.setColor("#E63946");
                 task1.setTags("design,ui");
-                dataManager.save(task1);
+                dataManager.saveWithoutReload(task1);
 
                 KanbanTask task2 = dataManager.create(KanbanTask.class);
                 task2.setText("Implement backend API");
@@ -155,7 +155,7 @@ public class DemoDataInitializer {
                 task2.setProgress(50);
                 task2.setColor("#4CAF50");
                 task2.setTags("backend,api");
-                dataManager.save(task2);
+                dataManager.saveWithoutReload(task2);
 
             } else if (i == 3) {
                 KanbanTask task3 = dataManager.create(KanbanTask.class);
@@ -167,7 +167,7 @@ public class DemoDataInitializer {
                 task3.setProgress(75);
                 task3.setColor("#2196F3");
                 task3.setTags("testing");
-                dataManager.save(task3);
+                dataManager.saveWithoutReload(task3);
 
             } else if (i == 4) {
                 KanbanTask task4 = dataManager.create(KanbanTask.class);
@@ -179,7 +179,7 @@ public class DemoDataInitializer {
                 task4.setProgress(0);
                 task4.setColor("#FFC107");
                 task4.setTags("devops");
-                dataManager.save(task4);
+                dataManager.saveWithoutReload(task4);
             }
         }
     }

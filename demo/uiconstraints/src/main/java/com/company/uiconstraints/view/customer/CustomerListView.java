@@ -29,7 +29,7 @@ public class CustomerListView extends StandardListView<Customer> {
         Customer customer = dataManager.create(Customer.class);
         customer.setName("Imported customer " + System.currentTimeMillis());
         customer.setComments("Imported at " + LocalDateTime.now());
-        dataManager.save(customer);
+        dataManager.saveWithoutReload(customer);
 
         customersDl.load();
     }
