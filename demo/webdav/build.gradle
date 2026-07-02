@@ -21,7 +21,7 @@ repositories {
     }
     if (file('../../trial_repository').exists()) {
         maven {
-            url "file://${project.projectDir}/../../trial_repository"
+            url = file('../../trial_repository')
         }
     } else {
         maven {
