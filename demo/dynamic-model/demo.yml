@@ -1,0 +1,317 @@
+---
+model:
+  enumerations:
+    - name: "MaritalStatus"
+      values:
+        - name: "SINGLE"
+          id: "S"
+          messages:
+            en: "Single"
+        - name: "MARRIED"
+          id: "M"
+          messages:
+            en: "Married"
+        - name: "DIVORCED"
+          id: "D"
+          messages:
+            en: "Divorced"
+      messages:
+        en: "Marital status"
+  entities:
+    - name: "City"
+      attributes:
+        - name: "name"
+          javaClass: "java.lang.String"
+          required: true
+          unique: true
+          instanceName: true
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Name"
+        - name: "country"
+          javaClass: "java.lang.String"
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Country"
+      views:
+        - type: "list"
+          viewId: "City.list"
+          viewTitle: "Cities"
+          resourceRoles:
+            - "employee"
+            - "manager"
+          menuItem:
+            parentMenu: "application"
+            resourceRoles:
+              - "employee"
+              - "manager"
+          descriptor:
+            template: "default"
+        - type: "detail"
+          viewId: "City.detail"
+          resourceRoles:
+            - "employee"
+            - "manager"
+          descriptor:
+            template: "default"
+      resourceRoles:
+        read:
+          - "employee"
+          - "manager"
+        create:
+          - "manager"
+        update:
+          - "manager"
+        delete:
+          - "manager"
+      messages:
+        en: "City"
+    - name: "Office"
+      attributes:
+        - name: "name"
+          javaClass: "java.lang.String"
+          required: true
+          instanceName: true
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Name"
+        - name: "address"
+          javaClass: "java.lang.String"
+          length: 500
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Address"
+        - name: "capacity"
+          javaClass: "java.lang.Integer"
+          resourceRoles:
+            view:
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Capacity"
+        - name: "city"
+          entityName: "City"
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "City"
+        - name: "meetingRooms"
+          entityName: "MeetingRoom"
+          collection: true
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Meeting rooms"
+      views:
+        - type: "list"
+          viewId: "Office.list"
+          viewTitle: "Offices"
+          resourceRoles:
+            - "employee"
+            - "manager"
+          menuItem:
+            parentMenu: "application"
+            resourceRoles:
+              - "employee"
+              - "manager"
+          descriptor:
+            template: "default"
+        - type: "detail"
+          viewId: "Office.detail"
+          resourceRoles:
+            - "employee"
+            - "manager"
+          descriptor:
+            template: "default"
+      resourceRoles:
+        read:
+          - "employee"
+          - "manager"
+        create:
+          - "manager"
+        update:
+          - "manager"
+        delete:
+          - "manager"
+      messages:
+        en: "Office"
+    - name: "MeetingRoom"
+      attributes:
+        - name: "name"
+          javaClass: "java.lang.String"
+          required: true
+          instanceName: true
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Name"
+        - name: "seats"
+          javaClass: "java.lang.Integer"
+          resourceRoles:
+            view:
+              - "employee"
+              - "manager"
+            modify:
+              - "manager"
+          messages:
+            en: "Seats"
+      views:
+        - type: "detail"
+          viewId: "MeetingRoom.detail"
+          resourceRoles:
+            - "employee"
+            - "manager"
+          descriptor:
+            template: "default"
+      resourceRoles:
+        read:
+          - "employee"
+          - "manager"
+        create:
+          - "manager"
+        update:
+          - "manager"
+        delete:
+          - "manager"
+      messages:
+        en: "Meeting room"
+    - name: "User"
+      attributes:
+        - name: "maritalStatus"
+          enumeration: "MaritalStatus"
+          resourceRoles:
+            modify:
+              - "manager"
+          messages:
+            en: "Marital status"
+        - name: "phone"
+          javaClass: "java.lang.String"
+          length: 20
+          validation:
+            constraints:
+              - annotation: "Pattern"
+                parameters:
+                  regexp: "^\\+[1-9]\\d{1,14}$"
+                message: "The phone can consists of + sign and up to 14 digits"
+          resourceRoles:
+            modify:
+              - "manager"
+          messages:
+            en: "Phone"
+      views:
+        - viewId: "User.list"
+          descriptor:
+            source: |
+              <?xml version="1.0" encoding="UTF-8"?>
+              
+              <view xmlns="http://jmix.io/schema/flowui/view" xmlns:ext="http://jmix.io/schema/flowui/view-ext" extends="com/company/dynamicmodel/view/user/user-list-view.xml">
+                <layout>
+                  <dataGrid id="usersDataGrid">
+                    <columns>
+                      <column property="maritalStatus"/>
+                      <column property="phone"/>
+                    </columns>
+                  </dataGrid>
+                </layout>
+              </view>
+        - viewId: "User.detail"
+          descriptor:
+            source: |
+              <?xml version="1.0" encoding="UTF-8"?>
+              
+              <view xmlns="http://jmix.io/schema/flowui/view" xmlns:ext="http://jmix.io/schema/flowui/view-ext" extends="com/company/dynamicmodel/view/user/user-detail-view.xml">
+                <layout>
+                  <formLayout id="form">
+                    <select id="maritalStatusField" property="maritalStatus"/>
+                    <textField id="phoneField" property="phone"/>
+                  </formLayout>
+                </layout>
+              </view>
+    - name: "Department"
+      attributes:
+        - name: "office"
+          entityName: "Office"
+          resourceRoles:
+            modify:
+              - "manager"
+          messages:
+            en: "Office"
+      views:
+        - viewId: "Department.list"
+          descriptor:
+            source: |
+              <?xml version="1.0" encoding="UTF-8"?>
+              
+              <view xmlns="http://jmix.io/schema/flowui/view" xmlns:ext="http://jmix.io/schema/flowui/view-ext" extends="com/company/dynamicmodel/view/department/department-list-view.xml">
+                <data>
+                  <collection id="departmentsDc">
+                    <fetchPlan>
+                      <property name="office" fetchPlan="_instance_name"/>
+                    </fetchPlan>
+                  </collection>
+                </data>
+                <layout>
+                  <dataGrid id="departmentsDataGrid">
+                    <columns>
+                      <column property="office"/>
+                    </columns>
+                  </dataGrid>
+                </layout>
+              </view>
+        - viewId: "Department.detail"
+          descriptor:
+            source: |
+              <?xml version="1.0" encoding="UTF-8"?>
+              
+              <view xmlns="http://jmix.io/schema/flowui/view" xmlns:ext="http://jmix.io/schema/flowui/view-ext" extends="com/company/dynamicmodel/view/department/department-detail-view.xml">
+                <data>
+                  <instance id="departmentDc">
+                    <fetchPlan>
+                      <property name="office" fetchPlan="_instance_name"/>
+                    </fetchPlan>
+                  </instance>
+                </data>
+                <layout>
+                  <formLayout id="form">
+                    <entityPicker id="officeField" property="office">
+                      <actions>
+                        <action id="entityLookup" type="entity_lookup"/>
+                        <action id="entityClear" type="entity_clear"/>
+                      </actions>
+                    </entityPicker>
+                  </formLayout>
+                </layout>
+              </view>

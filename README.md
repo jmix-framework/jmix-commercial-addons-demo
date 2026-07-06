@@ -10,6 +10,7 @@ Open the root project in the IDE with the Jmix Studio plugin installed and refer
 
 - [BPM](demo/bpm/README.md)
 - [Business Calendars](demo/business-calendars/README.md)
+- [Dynamic Model](demo/dynamic-model/README.md)
 - [Kanban](demo/kanban/README.md)
 - [Grouping Data Grid](demo/grouping-data-grid/README.md)
 - [Maps](demo/maps/README.md)
