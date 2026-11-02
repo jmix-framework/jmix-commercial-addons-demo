@@ -1,4 +1,4 @@
-rootProject.name = 'jmix-commercial-addons-demo-2'
+rootProject.name = 'jmix-commercial-addons-demo'
 
 includeBuild 'demo/bpm'
 includeBuild 'demo/business-calendars'
