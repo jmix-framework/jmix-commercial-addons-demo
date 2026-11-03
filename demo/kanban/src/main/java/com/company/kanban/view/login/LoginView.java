@@ -3,7 +3,6 @@ package com.company.kanban.view.login;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.AbstractLogin.LoginEvent;
 import com.vaadin.flow.component.login.LoginI18n;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.router.Route;
@@ -11,7 +10,6 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
@@ -48,9 +46,6 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     @Autowired
     private MessageTools messageTools;
 
-    @Autowired
-    private Notifications notifications;
-
     @ViewComponent
     private JmixLoginForm login;
 
@@ -67,16 +62,6 @@ public class LoginView extends StandardView implements LocaleChangeObserver {
     public void onInit(final InitEvent event) {
         initLocales();
         initDefaultCredentials();
-        showWarningIfDefaultCredentials();
-    }
-
-    private void showWarningIfDefaultCredentials() {
-        if ("admin".equals(defaultPassword)) {
-            notifications.create("WARNING: Change admin password and remove ui.login.default* properties when deploying the application to production")
-                    .withPosition(Notification.Position.BOTTOM_CENTER)
-                    .withDuration(10000)
-                    .show();
-        }
     }
 
     private void initLocales() {
