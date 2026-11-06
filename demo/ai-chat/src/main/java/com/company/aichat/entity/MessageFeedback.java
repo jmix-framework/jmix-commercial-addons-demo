@@ -1,6 +1,8 @@
 package com.company.aichat.entity;
 
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -35,6 +37,9 @@ public class MessageFeedback {
     @Lob
     private String text;
 
+    // For a hard-deleted entity Studio turns this into ON DELETE CASCADE on the foreign key,
+    // so removing an answer (regenerate, clear history) removes the feedback given on it.
+    @OnDeleteInverse(DeletePolicy.CASCADE)
     @JoinColumn(name = "CHAT_MESSAGE_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private ChatMessage chatMessage;

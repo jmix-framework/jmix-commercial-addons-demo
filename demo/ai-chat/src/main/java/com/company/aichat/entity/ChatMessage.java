@@ -5,6 +5,7 @@ import io.jmix.aichat.entity.AiMessageRole;
 import io.jmix.core.FileRef;
 import io.jmix.core.entity.FileRefConverter;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
 import org.jspecify.annotations.Nullable;
@@ -47,6 +48,7 @@ public class ChatMessage implements AiChatMessage {
     @Column(name = "ROLE")
     private String role;
 
+    @Composition
     @OneToMany(mappedBy = "chatMessage")
     private List<MessageFeedback> feedback;
 
