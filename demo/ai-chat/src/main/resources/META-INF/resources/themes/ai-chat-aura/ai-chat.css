@@ -1,1 +1,45 @@
-/* Define your styles here */
+/* Keyword badges above the message input */
+.keyword-badges {
+    flex-wrap: wrap;
+    gap: var(--vaadin-gap-s, 0.5rem);
+    padding-bottom: var(--vaadin-padding-s);
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-s, 0.875rem);
+}
+
+/* Help panel with the demo scenarios */
+.help-panel {
+    border-inline-start: 1px solid var(--vaadin-border-color-secondary);
+}
+
+.help-panel-header {
+    padding: var(--vaadin-padding-s) var(--vaadin-padding-s) var(--vaadin-padding-s) var(--vaadin-padding-m);
+}
+
+.help-panel-header > h3 {
+    margin: 0;
+}
+
+.help-panel-content {
+    padding: 0 var(--vaadin-padding-m) var(--vaadin-padding-m);
+    gap: var(--vaadin-gap-m);
+}
+
+.help-scenario {
+    padding: var(--vaadin-padding-m);
+    border: 1px solid var(--vaadin-border-color-secondary);
+    border-radius: var(--vaadin-radius-l);
+    gap: var(--vaadin-gap-s, 0.5rem);
+}
+
+.help-scenario > h4 {
+    margin: 0;
+}
+
+.help-panel-content vaadin-markdown > :first-child {
+    margin-top: 0;
+}
+
+.help-panel-content vaadin-markdown > :last-child {
+    margin-bottom: 0;
+}

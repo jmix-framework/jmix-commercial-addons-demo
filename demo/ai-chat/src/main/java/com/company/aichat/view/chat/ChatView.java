@@ -29,7 +29,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
 import io.jmix.flowui.app.inputdialog.InputParameter;
-import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
@@ -55,7 +55,7 @@ public class ChatView extends StandardView {
     /**
      * How long the answer waits while the thinking steps run. The feed is wiped when the turn
      * ends and the thinking region hides on the first token, so without this window the statuses
-     * would flash past. Must outlast {@link #publishThinkingSteps(boolean)}.
+     * would flash past. Must outlast {@link #publishThinkingSteps(int)}.
      */
     private static final Duration THINKING_STEPS_WINDOW = Duration.ofMillis(3500);
 
@@ -63,6 +63,8 @@ public class ChatView extends StandardView {
     private AiChat<ChatMessage> chat;
     @ViewComponent
     private CollectionLoader<ChatMessage> chatMessagesDl;
+    @ViewComponent
+    private SidePanelLayout helpPanelLayout;
     @ViewComponent
     private MessageBundle messageBundle;
 
@@ -80,14 +82,13 @@ public class ChatView extends StandardView {
     private Downloader downloader;
 
     /**
-     * Streaming answers play the thinking steps first and then stream token by token. Instant
-     * answers skip both, to fill the conversation quickly.
+     * Every answer plays the thinking steps first and then streams token by token.
      */
     @Install(to = "chat", subject = "llmProvider")
     private Flux<String> chatLlmProvider(final LLMProvider.LLMRequest request) {
         List<AIAttachment> attachments = request.attachments() != null ? request.attachments() : List.of();
         Flux<String> answer = chatService.stream(request.userMessage(), attachments);
-        publishThinkingSteps(!attachments.isEmpty());
+        publishThinkingSteps(attachments.size());
         return answer.delaySubscription(THINKING_STEPS_WINDOW);
     }
 
@@ -155,7 +156,6 @@ public class ChatView extends StandardView {
         log.info("feedback stored: id={} liked={} messageId={}", saved.getId(), liked, message.getId());
         notifications.create(messageBundle.getMessage(liked ? "feedbackUp.saved" : "feedbackDown.saved"))
                 .withType(Notifications.Type.SUCCESS)
-                .withPosition(Notification.Position.BOTTOM_END)
                 .show();
     }
 
@@ -194,17 +194,52 @@ public class ChatView extends StandardView {
 
     @Subscribe("suggestSummaryButton")
     public void onSuggestSummaryButtonClick(final ClickEvent<Button> event) {
-        chat.prompt(messageBundle.getMessage("suggestSummaryButton.prompt"));
+        chat.prompt(messageBundle.getMessage("summaryPrompt"));
     }
 
-    @Subscribe("suggestLetterButton")
-    public void onSuggestLetterButtonClick(final ClickEvent<Button> event) {
-        chat.prompt(messageBundle.getMessage("suggestLetterButton.prompt"));
+    @Subscribe("suggestEmailButton")
+    public void onSuggestEmailButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("emailPrompt"));
     }
 
     @Subscribe("suggestCodeButton")
     public void onSuggestCodeButtonClick(final ClickEvent<Button> event) {
-        chat.prompt(messageBundle.getMessage("suggestCodeButton.prompt"));
+        chat.prompt(messageBundle.getMessage("codePrompt"));
+    }
+
+    @Subscribe("helpButton")
+    public void onHelpButtonClick(final ClickEvent<Button> event) {
+        helpPanelLayout.toggleSidePanel();
+    }
+
+    @Subscribe("trySummaryButton")
+    public void onTrySummaryButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("summaryPrompt"));
+    }
+
+    @Subscribe("tryCodeButton")
+    public void onTryCodeButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("codePrompt"));
+    }
+
+    @Subscribe("tryEmailButton")
+    public void onTryEmailButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("emailPrompt"));
+    }
+
+    @Subscribe("tryLongButton")
+    public void onTryLongButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("longPrompt"));
+    }
+
+    @Subscribe("tryErrorButton")
+    public void onTryErrorButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("errorPrompt"));
+    }
+
+    @Subscribe("tryFailButton")
+    public void onTryFailButtonClick(final ClickEvent<Button> event) {
+        chat.prompt(messageBundle.getMessage("failPrompt"));
     }
 
     /**
@@ -212,36 +247,43 @@ public class ChatView extends StandardView {
      * by this caller — the publisher owns that. Two statuses overlap, one completes out of order,
      * and one reports progress through {@code update()}. The whole script fits inside
      * {@link #THINKING_STEPS_WINDOW}.
+     *
+     * @param attachmentCount number of files attached to the message
      */
-    private void publishThinkingSteps(boolean withAttachments) {
+    private void publishThinkingSteps(int attachmentCount) {
         ThinkingStatusPublisher statuses = chat.getThinkingStatusPublisher();
         Thread worker = new Thread(() -> {
             try {
-                if (withAttachments) {
-                    ThinkingStatusItem photos = statuses.start("Analyzing photo 1 of 1");
-                    Thread.sleep(900);
-                    ThinkingStatusItem zones = statuses.start("Matching damaged zones");
-                    Thread.sleep(800);
-                    photos.complete("1 photo");
+                if (attachmentCount > 0) {
+                    ThinkingStatusItem upload = statuses.start("Receiving the files");
+                    Thread.sleep(700);
+                    ThinkingStatusItem reading = statuses.start("Reading file 1 of " + attachmentCount);
                     Thread.sleep(500);
-                    zones.complete("5 zones checked");
-                    ThinkingStatusItem estimate = statuses.start("Estimating repair cost");
-                    Thread.sleep(800);
-                    estimate.complete();
-                } else {
-                    ThinkingStatusItem lookup = statuses.start("Looking up claim CLM-1042");
-                    Thread.sleep(500);
-                    ThinkingStatusItem policy = statuses.start("Checking policy coverage");
-                    Thread.sleep(800);
-                    policy.complete("Comprehensive");
-                    Thread.sleep(400);
-                    lookup.complete();
-                    ThinkingStatusItem reading = statuses.start("Reading document 1 of 4");
-                    for (int i = 2; i <= 4; i++) {
-                        Thread.sleep(400);
-                        reading.update("Reading document " + i + " of 4");
+                    upload.complete(attachmentCount == 1 ? "1 file" : attachmentCount + " files");
+                    for (int i = 2; i <= attachmentCount; i++) {
+                        Thread.sleep(500);
+                        reading.update("Reading file " + i + " of " + attachmentCount);
                     }
-                    reading.complete("4 documents");
+                    Thread.sleep(500);
+                    reading.complete();
+                    ThinkingStatusItem listing = statuses.start("Preparing the file list");
+                    Thread.sleep(600);
+                    listing.complete();
+                } else {
+                    ThinkingStatusItem request = statuses.start("Understanding the request");
+                    Thread.sleep(500);
+                    ThinkingStatusItem search = statuses.start("Searching the knowledge base");
+                    Thread.sleep(800);
+                    search.complete("3 sources");
+                    Thread.sleep(400);
+                    request.complete();
+                    ThinkingStatusItem reading = statuses.start("Reading source 1 of 3");
+                    for (int i = 2; i <= 3; i++) {
+                        Thread.sleep(500);
+                        reading.update("Reading source " + i + " of 3");
+                    }
+                    Thread.sleep(400);
+                    reading.complete("3 sources");
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

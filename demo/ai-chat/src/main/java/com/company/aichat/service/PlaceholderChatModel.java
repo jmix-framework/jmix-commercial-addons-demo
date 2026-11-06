@@ -6,6 +6,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.content.Media;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
@@ -16,215 +17,212 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Local Spring AI chat model that plays a claims assistant without contacting any provider.
- * It answers with prepared, insurance-flavoured Markdown chosen by keywords in the user prompt,
- * to show streaming, tables, code blocks, long answers, attachments and the error state.
+ * Local Spring AI chat model that answers without contacting any provider. It picks a prepared
+ * Markdown answer by keywords in the user prompt, to show streaming, tables, code blocks, long
+ * answers, attachments and the error state.
  *
- * <p>Keywords (case-insensitive, matched anywhere in the prompt), first match wins:
+ * <p>Keywords are case-insensitive and match at the start of any word, so {@code summary} also
+ * matches "summarize" and {@code code} matches "codes". The first match wins:
  * <ul>
- *     <li>a message with an image attached — a damage assessment of the photo;</li>
+ *     <li>a message with attachments — a list of the files received;</li>
+ *     <li>{@code fail} — the stream fails before the first token;</li>
  *     <li>{@code error} — a partial answer, then a failure;</li>
- *     <li>{@code code} — a Java code block;</li>
- *     <li>{@code letter} — a long letter to the customer, slow enough to press Stop;</li>
- *     <li>{@code summar} — a claim summary with a Markdown table;</li>
- *     <li>{@code long text} — a long claims-handling guide;</li>
- *     <li>anything else — the default answer listing what the assistant can do.</li>
+ *     <li>{@code code} — Java and SQL code blocks;</li>
+ *     <li>{@code email} — a long email, slow enough to press Stop;</li>
+ *     <li>{@code summary} — a project summary with a Markdown table;</li>
+ *     <li>{@code long} — a long article, to build a scrollable conversation;</li>
+ *     <li>anything else — the default answer listing the keywords.</li>
  * </ul>
+ * The keyword badges and the help panel of the chat view list the same keywords.
  */
 public class PlaceholderChatModel implements ChatModel {
 
+    private static final Pattern KEYWORD_FAIL = keyword("fail");
+    private static final Pattern KEYWORD_ERROR = keyword("error");
+    private static final Pattern KEYWORD_CODE = keyword("code");
+    private static final Pattern KEYWORD_EMAIL = keyword("e-?mail");
+    private static final Pattern KEYWORD_SUMMARY = keyword("summar");
+    private static final Pattern KEYWORD_LONG = keyword("long");
+
     private static final String ANSWER_DEFAULT = """
-            I'm your claims assistant. Here is what I can help you with:
+            Hi! I'm a **placeholder model**: I don't call any AI provider, I answer with prepared \
+            replies picked by keywords in your message. Try one of these:
 
-            1. **Summarize a claim** — status, coverage, damage and the expected payout at a glance.
-            2. **Draft customer letters** — document requests, decisions and payout notices.
-            3. **Assess damage from photos** — attach a photo and I'll list the damaged zones.
-            4. **Check policy terms** — coverage limits, deductibles and validity periods.
+            | Keyword | What you get |
+            |---------|--------------|
+            | `summary` | A short project summary with a table |
+            | `email` | A long email that streams slowly — press **Stop** midway |
+            | `code` | Code blocks with syntax highlighting and a copy button |
+            | `long` | A long article to scroll through |
+            | `error` | An answer that breaks off with an error, then **Retry** |
+            | `fail` | A failure before the first word arrives |
 
-            ---
-
-            ### Your queue today
-
-            | Claim | Customer | Status | Next step |
-            |-------|----------|--------|-----------|
-            | CLM-1042 | Emily Carter | Awaiting documents | Get the repair estimate from Harbor Auto Body |
-            | CLM-1047 | Daniel Brooks | In review | Confirm the damage percent with the photos |
-            | CLM-1049 | Sophia Turner | New | Assign an adjuster and request the police report |
-            | CLM-1038 | James Whitaker | Approved | Schedule the payout |
-
-            Tip: ask me to **summarize a claim**, **draft a letter to the customer**, or attach a photo of the damage.
+            You can also **attach a file** from the **+** menu or drop it onto the chat — I'll list \
+            what I received. Open the **?** panel next to the send button for the full tour.
             """;
 
     private static final String ANSWER_SUMMARY = """
-            ### Claim CLM-1042 — summary
+            ### Website redesign — weekly summary
 
-            Front-left collision at the intersection of Maple Avenue and 5th Street on **October 18, 2026**. \
-            A delivery van ran a red light; the police report confirms the other driver was at fault.
+            The team finished the new navigation and the product pages this week. The launch is \
+            planned for **November 20**, one week later than first scheduled.
 
-            | Item | Value |
-            |------|-------|
-            | Customer | Emily Carter |
-            | Policy | POL-2026-0187 — Comprehensive |
-            | Vehicle | 2022 Toyota RAV4, plate 8KTR412 |
-            | Market value | $32,500.00 |
-            | Damage | **35%** — front bumper (severe), left side (moderate), right side (minor) |
-            | Coverage limit / deductible | $40,000.00 / $500.00 |
-            | Estimated payout | **$10,875.00** |
-            | Status | Awaiting documents |
+            | Workstream | Owner | Progress | Status |
+            |------------|-------|----------|--------|
+            | Visual design | Anna | 100% | Done |
+            | Navigation and layout | Ben | 90% | In review |
+            | Product pages | Chloe | 75% | On track |
+            | Blog migration | David | 40% | **At risk** |
+            | Accessibility audit | Emma | 0% | Starts Monday |
 
-            **What's missing:** the itemized repair estimate from *Harbor Auto Body*. \
-            Once it arrives, the claim can move to approval — the estimate is well within the coverage limit.
+            **Main risk:** about 300 old blog posts still need manual fixes after the import. \
+            Ben will help David next week, so the migration can still finish before the launch.
 
-            > The other driver's insurer has been notified, so we can pursue subrogation after the payout.
+            > Next review: Thursday at 10:00, with the first preview of the home page.
             """;
 
-    private static final String ANSWER_LETTER = """
-            **Subject:** Your claim CLM-1042 — one document needed to complete the review
+    private static final String ANSWER_EMAIL = """
+            **Subject:** New launch date for the website — November 20
 
-            Dear Ms. Carter,
+            Hi everyone,
 
-            Thank you for reporting the accident of October 18, 2026, and for sending the photos of your \
-            2022 Toyota RAV4 so promptly. I'm sorry you had to go through this, and I'm glad to hear that you \
-            were not seriously hurt.
+            Thank you all for the great work over the last few weeks. The new navigation looks \
+            fantastic, and the first feedback from the pilot users has been very positive.
 
-            I have reviewed your claim under policy **POL-2026-0187**. Your comprehensive coverage applies to \
-            this incident, and the police report confirms that the other driver ran a red light at the \
-            intersection of Maple Avenue and 5th Street.
+            After Thursday's review we decided to move the launch of the new website from \
+            **November 13** to **November 20**. Here is why, and what it means for each of you.
 
-            Based on the photos and the inspection notes, we currently assess the damage at about **35%** of \
-            the vehicle's market value. After your $500 deductible, the estimated payout is **$10,875.00**.
+            **Why we're moving the date**
 
-            **To finalize the review, we need one more document:**
+            The blog migration turned out to be bigger than we expected. About 300 older posts use \
+            a layout the new site doesn't support, and fixing them by hand takes time. We'd rather \
+            launch a week later than send visitors to broken pages.
 
-            - An itemized **repair estimate** from Harbor Auto Body (or another licensed repair shop of your \
-            choice), showing parts, labor hours and paint costs.
+            **What changes**
 
-            You can upload the estimate in the customer portal, reply to this email with the file attached, \
-            or ask the shop to send it to us directly at claims@northwind-insurance.example.
+            - **Design** — no changes, the visual design is final.
+            - **Development** — Ben joins David on the blog migration for the next week.
+            - **Content** — Chloe finishes the product pages as planned, then helps with proofreading.
+            - **Quality** — Emma starts the accessibility audit on Monday instead of Wednesday.
 
-            **What happens next:**
+            **The new plan**
 
-            1. Once we receive the estimate, I will compare it with our assessment within two business days.
-            2. If the estimate is within the assessed amount, we will approve the claim right away.
-            3. The payment will be sent to the repair shop or to you, whichever you prefer.
+            1. November 10–14: finish the blog migration and the product pages.
+            2. November 17: content freeze; only bug fixes after this point.
+            3. November 18–19: final testing on phones, tablets and desktop browsers.
+            4. November 20: launch in the morning, with the whole team on call until noon.
 
-            Because the other driver was at fault, we will also seek recovery of your deductible from their \
-            insurer. If we succeed, we will refund the $500 to you — there is nothing you need to do for that.
+            If anything in this plan doesn't work for you, please tell me by Friday, so we can \
+            adjust it while there's still time. And if you have ideas for making the migration \
+            faster, I'd love to hear them — every hour we save is an hour of testing we gain.
 
-            If you need a rental car while your vehicle is being repaired, please let me know: your policy \
-            includes rental reimbursement of up to $40 per day for 30 days.
+            Thanks again for all the effort. We're close, and it's going to be a great launch.
 
-            Please don't hesitate to call me at (555) 014-2290 if you have any questions.
+            Best regards,
 
-            Kind regards,
-
-            **Alex Morgan**
-            Senior Claims Adjuster
-            Northwind Insurance
+            **Maria**
+            Project Manager
             """;
 
     private static final String ANSWER_CODE = """
-            Here is how the estimated payout of a claim is calculated in this application:
+            Here is a small Java service that counts tasks by status:
 
             ```java
-            @Service
-            public class PayoutCalculator {
+            public record Task(String title, Status status, LocalDate dueDate) {
+            }
 
-                public BigDecimal calculate(BigDecimal marketValue, Integer damagePercent,
-                                            BigDecimal deductible, BigDecimal coverageLimit) {
-                    BigDecimal damage = marketValue.multiply(BigDecimal.valueOf(damagePercent))
-                            .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                    BigDecimal payout = damage.subtract(deductible).max(BigDecimal.ZERO);
-                    return payout.min(coverageLimit);
+            @Service
+            public class TaskStatistics {
+
+                public Map<Status, Long> countByStatus(List<Task> tasks) {
+                    return tasks.stream()
+                            .collect(Collectors.groupingBy(Task::status,
+                                    TreeMap::new, Collectors.counting()));
+                }
+
+                public List<Task> overdue(List<Task> tasks, LocalDate today) {
+                    return tasks.stream()
+                            .filter(task -> task.status() != Status.DONE)
+                            .filter(task -> task.dueDate().isBefore(today))
+                            .sorted(Comparator.comparing(Task::dueDate))
+                            .toList();
                 }
             }
             ```
 
-            For **CLM-1042**: `32,500 × 35% − 500 = 10,875`, which is below the `40,000` coverage limit, \
-            so the estimated payout is **$10,875.00**.
-
-            The same formula expressed as a JPQL query over all claims awaiting documents:
+            The same statistics as a SQL query over the `TASK` table:
 
             ```sql
-            select c.number, c.damagePercent, c.estimatedPayout
-            from Claim c
-            where c.status = 'AWAITING_DOCUMENTS'
-            order by c.estimatedPayout desc
+            select status, count(*) as total
+            from task
+            where due_date < current_date
+              and status <> 'DONE'
+            group by status
+            order by total desc
             ```
-            """;
 
-    private static final String ANSWER_PHOTO = """
-            ### Damage assessment from the photo
-
-            I can see a mid-size SUV with impact damage concentrated on the **front-left corner**:
-
-            - **Front bumper** — cracked cover, pushed in by about 5 cm on the left. *Severe* — replace.
-            - **Left headlight** — housing broken, lens missing. *Severe* — replace.
-            - **Hood** — crease along the left edge, paint chipped. *Moderate* — repair and repaint.
-            - **Left front fender** — dented above the wheel arch. *Moderate* — repair.
-            - **Windshield** — no visible cracks. *No damage.*
-
-            **Estimated damage:** about **30–35%** of the vehicle's market value, which is consistent with \
-            the 35% recorded on claim CLM-1042.
-
-            **Recommended next steps:**
-
-            1. Ask the repair shop to check the radiator support and the left headlight bracket — front-left \
-            impacts at this angle often damage them as well.
-            2. Request the itemized repair estimate to confirm the parts list.
+            Each code block has its own **copy** button, and the language is highlighted.
             """;
 
     private static final String ANSWER_LONG = """
-            # Claims handling guide
+            # How to write a good prompt
 
-            This guide walks through the life of a motor claim, from the first notice of loss to the payout.
+            A language model only knows what you tell it. This guide shows how to ask so that the \
+            first answer is already close to what you need.
 
-            ## 1. First notice of loss
+            ## 1. Start with the goal
 
-            Register the claim the same day it is reported. Capture the date, time and place of the incident, \
-            the vehicles and people involved, and whether the police attended. Ask the customer for photos \
-            while the damage is still fresh.
+            Say what you want to achieve before you say what to do. "Write an email" leaves the \
+            model guessing; "Write an email that asks the team to move the launch by one week" \
+            gives it a direction. One clear sentence about the goal saves several rounds of edits.
 
-            ## 2. Coverage check
+            ## 2. Give the context
 
-            Confirm that the policy was valid on the incident date and that the coverage type applies: \
-            third-party policies do not pay for the insured's own vehicle, collision covers impacts, and \
-            comprehensive also covers theft, fire, hail and vandalism.
+            The model doesn't know your project, your audience or your constraints. Mention the \
+            ones that matter: who will read the answer, what they already know, and what must not \
+            change. If you have a document or a table, attach it instead of describing it.
 
-            ## 3. Documents
+            ## 3. Describe the format
 
-            | Document | Required for |
-            |----------|--------------|
-            | Police report | Any collision with another vehicle or injury |
-            | Photos | Every claim |
-            | Repair estimate | Every claim with repairable damage |
-            | Driver's license | Claims where the driver is not the policyholder |
+            Ask for the shape of the answer explicitly:
 
-            ## 4. Damage assessment
+            | You want | Ask for |
+            |----------|---------|
+            | A quick overview | "Three bullet points, one line each" |
+            | A comparison | "A table with one row per option" |
+            | Something to paste | "Only the code, no explanation" |
+            | A draft to edit | "A short email, friendly but formal" |
 
-            Assess the damage as a percentage of the vehicle's market value. Record each damaged zone \
-            separately, with a severity and an estimated cost, so the percentage can be explained later.
+            ## 4. Show an example
 
-            ## 5. Payout estimate
+            One good example is worth a paragraph of rules. If you need a specific tone or \
+            structure, paste a sample and ask the model to follow it.
 
-            The estimated payout is the assessed damage minus the deductible, capped by the coverage limit. \
-            A payout above 70% of the market value usually means the vehicle should be treated as a total loss.
+            ## 5. Split big tasks
 
-            ## 6. Decision
+            A long task in one prompt tends to produce a long, vague answer. Ask for an outline \
+            first, check it, and then ask for each part separately. You stay in control of the \
+            direction, and each answer is easier to review.
 
-            Approve the claim when the documents are complete and the estimate matches the assessment. \
-            Reject it only with a written reason that cites the policy terms.
+            ## 6. Iterate
 
-            ## 7. Payment and recovery
+            Treat the first answer as a draft. Point out what to keep and what to change: "keep the \
+            structure, make it shorter, and drop the second paragraph". Small, specific corrections \
+            work better than starting over.
 
-            Pay the repair shop or the customer, then pursue subrogation against the at-fault party's insurer \
-            to recover the payout and the customer's deductible.
+            ## 7. Check the facts
+
+            Models can sound confident and still be wrong. Verify numbers, names and dates before \
+            you use the answer, especially when it goes to a customer.
 
             ## Summary
 
-            Register fast, check coverage early, collect documents once, and explain every number. A claim \
-            handled this way can be closed in under ten business days.
+            State the goal, give the context, describe the format, show an example, split big \
+            tasks, iterate, and check the facts. Prompts written this way get useful answers on \
+            the first try much more often.
             """;
+
+    private static final String ANSWER_PARTIAL = "Let me look into that. First, I'll check ";
 
     /** A word (or whitespace run) plus its trailing whitespace. */
     private static final Pattern TOKEN = Pattern.compile("\\S+\\s*|\\s+");
@@ -249,15 +247,22 @@ public class PlaceholderChatModel implements ChatModel {
 
     @Override
     public Flux<ChatResponse> stream(Prompt prompt) {
-        String text = promptText(prompt);
-        if (!hasMedia(prompt) && text.contains("error")
-                && !text.contains("code") && !text.contains("long text")) {
-            // Emit a partial answer, then fail — exercises the error banner + retry.
-            return emit("Checking the policy terms and the damage report — ")
-                    .concatWith(Flux.error(new RuntimeException("Simulated generation failure")));
+        if (media(prompt).isEmpty()) {
+            String text = promptText(prompt);
+            if (KEYWORD_FAIL.matcher(text).find()) {
+                // Fail before any token — the error banner shows over an empty answer.
+                return Flux.<ChatResponse>error(new RuntimeException("Simulated failure before the first token"))
+                        .delaySubscription(subscriptionDelay);
+            }
+            if (KEYWORD_ERROR.matcher(text).find()) {
+                // Emit a partial answer, then fail — the partial text stays above the error banner.
+                return emit(ANSWER_PARTIAL)
+                        .concatWith(Flux.error(new RuntimeException("Simulated failure in the middle of an answer")));
+            }
         }
         return emit(answerFor(prompt));
     }
+
     private Flux<ChatResponse> emit(String answer) {
         return Flux.fromIterable(tokenize(answer))
                 .delaySubscription(subscriptionDelay)
@@ -283,36 +288,90 @@ public class PlaceholderChatModel implements ChatModel {
     }
 
     private String answerFor(Prompt prompt) {
-        if (hasMedia(prompt)) {
-            return ANSWER_PHOTO;
+        List<Media> media = media(prompt);
+        if (!media.isEmpty()) {
+            return attachmentsAnswer(media);
         }
         String text = promptText(prompt);
-        if (text.contains("code")) {
+        if (KEYWORD_CODE.matcher(text).find()) {
             return ANSWER_CODE;
         }
-        if (text.contains("letter")) {
-            return ANSWER_LETTER;
+        if (KEYWORD_EMAIL.matcher(text).find()) {
+            return ANSWER_EMAIL;
         }
-        if (text.contains("summar")) {
+        if (KEYWORD_SUMMARY.matcher(text).find()) {
             return ANSWER_SUMMARY;
         }
-        if (text.contains("long text")) {
+        if (KEYWORD_LONG.matcher(text).find()) {
             return ANSWER_LONG;
         }
         return ANSWER_DEFAULT;
     }
 
-    private boolean hasMedia(Prompt prompt) {
-        return prompt.getInstructions().stream()
-                .anyMatch(message -> message instanceof UserMessage userMessage
-                        && !userMessage.getMedia().isEmpty());
+    /**
+     * Lists the attached files. The placeholder doesn't read their contents, so it says so
+     * instead of pretending.
+     */
+    private static String attachmentsAnswer(List<Media> media) {
+        StringBuilder answer = new StringBuilder("""
+                ### Attachments received
+
+                | # | File | Type | Size |
+                |---|------|------|------|
+                """);
+        for (int i = 0; i < media.size(); i++) {
+            Media file = media.get(i);
+            answer.append("| ").append(i + 1)
+                    .append(" | ").append(escapeCell(file.getName()))
+                    .append(" | ").append(file.getMimeType())
+                    .append(" | ").append(formatSize(file.getDataAsByteArray().length))
+                    .append(" |\n");
+        }
+        answer.append("""
+
+                I'm a placeholder model, so I don't look inside the files. A real model would get \
+                them as media through Spring AI and could describe an image or summarize a document.
+
+                The files are saved to the file storage together with your message: click a file \
+                in the conversation to download it.
+                """);
+        return answer.toString();
     }
 
-    private String promptText(Prompt prompt) {
+    private static String escapeCell(String value) {
+        return value.replace("|", "\\|");
+    }
+
+    private static String formatSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+        if (bytes < 1024 * 1024) {
+            return String.format(Locale.ROOT, "%.1f KB", bytes / 1024.0);
+        }
+        return String.format(Locale.ROOT, "%.1f MB", bytes / (1024.0 * 1024.0));
+    }
+
+    private static List<Media> media(Prompt prompt) {
+        return prompt.getInstructions().stream()
+                .filter(UserMessage.class::isInstance)
+                .map(UserMessage.class::cast)
+                .flatMap(userMessage -> userMessage.getMedia().stream())
+                .toList();
+    }
+
+    private static String promptText(Prompt prompt) {
         return prompt.getInstructions().stream()
                 .map(message -> message.getText() == null ? "" : message.getText())
                 .reduce("", (a, b) -> a + " " + b)
                 .toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * @return a pattern that finds the given stem at the start of a word
+     */
+    private static Pattern keyword(String stem) {
+        return Pattern.compile("\\b" + stem);
     }
 
     private ChatResponse response(String text) {
