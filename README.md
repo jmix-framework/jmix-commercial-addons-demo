@@ -8,6 +8,7 @@ If you downloaded this project as an [Enterprise Trial](https://docs.jmix.io/jmi
 
 Open the root project in the IDE with the Jmix Studio plugin installed and refer to each subproject’s README file for instructions on running them:
 
+- [AI Chat](demo/ai-chat/README.md)
 - [BPM](demo/bpm/README.md)
 - [Business Calendars](demo/business-calendars/README.md)
 - [Dynamic Model](demo/dynamic-model/README.md)

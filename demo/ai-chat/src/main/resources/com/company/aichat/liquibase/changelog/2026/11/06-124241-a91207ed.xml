@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS"
+        logicalFilePath="com/company/aichat/liquibase/changelog/2026/11/06-124241-a91207ed.xml">
+    <changeSet id="1" author="ai-chat">
+        <createTable tableName="CHAT_MESSAGE">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CHAT_MESSAGE"/>
+            </column>
+            <column name="CREATED_BY" type="VARCHAR(255)"/>
+            <column name="CREATED_DATE" type="timestamp with time zone"/>
+            <column name="CONTENT" type="CLOB"/>
+            <column name="ROLE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="ai-chat">
+        <createTable tableName="CHAT_MESSAGE_ATTACHMENTS">
+            <column name="CHAT_MESSAGE_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ATTACHMENTS" type="VARCHAR(1024)"/>
+            <column name="ATTACHMENTS_ORDER" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="ai-chat">
+        <createTable tableName="MESSAGE_FEEDBACK">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_MESSAGE_FEEDBACK"/>
+            </column>
+            <column name="CREATED_BY" type="VARCHAR(255)"/>
+            <column name="CREATED_DATE" type="timestamp with time zone"/>
+            <column name="LIKED" type="BOOLEAN"/>
+            <column name="TEXT" type="CLOB"/>
+            <column name="CHAT_MESSAGE_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="4" author="ai-chat">
+        <createIndex indexName="IDX_MESSAGE_FEEDBACK_CHAT_MESSAGE" tableName="MESSAGE_FEEDBACK">
+            <column name="CHAT_MESSAGE_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="CHAT_MESSAGE_ID" baseTableName="MESSAGE_FEEDBACK"
+                                 constraintName="FK_MESSAGE_FEEDBACK_ON_CHAT_MESSAGE" referencedColumnNames="ID"
+                                 referencedTableName="CHAT_MESSAGE"/>
+    </changeSet>
+    <changeSet id="5" author="ai-chat">
+        <addForeignKeyConstraint baseColumnNames="CHAT_MESSAGE_ID" baseTableName="CHAT_MESSAGE_ATTACHMENTS"
+                                 constraintName="FK_CHAT_MESSAGE_ATTACHMENTS_ON_CHAT_MESSAGE" referencedColumnNames="ID"
+                                 referencedTableName="CHAT_MESSAGE"/>
+    </changeSet>
+</databaseChangeLog>

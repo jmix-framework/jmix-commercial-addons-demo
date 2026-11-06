@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu">
+
+    <item view="ChatView" title="msg://com.company.aichat.view.chat/chatView.title" icon="CHAT"/>
+
+    <menu id="application" title="msg://com.company.aichat/menu.application.title">
+        <item view="User.list" title="msg://com.company.aichat.view.user/UserListView.title"/>
+    </menu>
+
+</menu-config>
