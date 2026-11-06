@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view" xmlns:aichat="http://jmix.io/schema/aichat/ui"
+      title="msg://chatView.title">
+    <data>
+        <collection id="chatMessagesDc" class="com.company.aichat.entity.ChatMessage">
+            <loader id="chatMessagesDl">
+                <query>
+                    <![CDATA[select e from ChatMessage e order by e.createdDate]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base">
+                <property name="attachments"/>
+            </fetchPlan>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout expand="chat">
+        <aichat:aiChat id="chat"
+                       themeNames="fixed-toolbar no-header-footer-gap"
+                       attachmentsEnabled="true"
+                       maxFiles="3"
+                       maxFileSize="5242880"
+                       acceptedFileExtensions=".png,.jpg,.jpeg,.gif,.webp,.txt,.pdf"
+                       dataContainer="chatMessagesDc"
+                       autoSave="true"
+                       classNames="claims-chat"
+                       width="100%">
+            <aichat:i18n>
+                <aichat:messageInput placeholder="msg://messageInput.placeholder"/>
+            </aichat:i18n>
+            <aichat:actions>
+                <aichat:action id="clearHistory" text="msg://clearHistory.text" icon="TRASH"/>
+            </aichat:actions>
+            <aichat:emptyStateHeader>
+                <hbox width="100%"
+                      alignItems="CENTER" justifyContent="CENTER"
+                      css="padding-bottom: 3rem">
+                    <image resource="public/images/logo.png" width="3em"/>
+                    <h1 text="msg://emptyStateHeader.text"/>
+                </hbox>
+            </aichat:emptyStateHeader>
+            <!-- Suggestion cards: each one submits a prompt the placeholder model answers
+                 with a different kind of content. -->
+            <aichat:emptyStateFooter>
+                <hbox width="100%" justifyContent="CENTER"
+                      css="flex-wrap: wrap; padding-top: 2rem">
+                    <button id="suggestSummaryButton" icon="CLIPBOARD_TEXT"
+                            text="msg://suggestSummaryButton.text"/>
+                    <button id="suggestLetterButton" icon="ENVELOPE"
+                            text="msg://suggestLetterButton.text"/>
+                    <button id="suggestCodeButton" icon="CODE"
+                            text="msg://suggestCodeButton.text"/>
+                </hbox>
+            </aichat:emptyStateFooter>
+
+            <aichat:userActions>
+                <aichat:action id="userCopy" type="aichat_messageCopy"/>
+            </aichat:userActions>
+            <aichat:assistantActions>
+                <aichat:action id="assistantCopy" type="aichat_messageCopy"/>
+                <aichat:action id="regenerate" type="aichat_messageRegenerate"/>
+                <aichat:action id="feedbackUp" icon="THUMBS_UP_O" description="msg://feedbackUp.description"/>
+                <aichat:action id="feedbackDown" icon="THUMBS_DOWN_O" description="msg://feedbackDown.description"/>
+            </aichat:assistantActions>
+
+            <aichat:inputPrefix>
+                <dropdownButton icon="PLUS" themeNames="no-dropdown-indicators">
+                    <items>
+                        <componentItem id="attachFileMenuItem">
+                            <aichat:aiUploadTrigger id="attachFileTrigger"
+                                                    aiChatId="chat"
+                                                    icon="PAPERCLIP"
+                                                    themeNames="menu-item"
+                                                    text="msg://attachFileTrigger.text"/>
+                        </componentItem>
+                        <actionItem id="clearHistoryMenuItem" ref="chat.clearHistory"/>
+                    </items>
+                </dropdownButton>
+            </aichat:inputPrefix>
+            <aichat:inputFooter>
+                <div text="msg://inputFooter.text"
+                     css="text-align: center; margin-top: 1em"
+                     width="100%"/>
+            </aichat:inputFooter>
+        </aichat:aiChat>
+    </layout>
+</view>
+

@@ -1,5 +1,6 @@
 rootProject.name = 'jmix-commercial-addons-demo'
 
+includeBuild 'demo/ai-chat'
 includeBuild 'demo/bpm'
 includeBuild 'demo/business-calendars'
 includeBuild 'demo/dynamic-model'
