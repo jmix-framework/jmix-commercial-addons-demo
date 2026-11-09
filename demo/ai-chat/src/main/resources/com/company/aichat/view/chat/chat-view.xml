@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view" xmlns:aichat="http://jmix.io/schema/aichat/ui"
+      title="msg://chatView.title">
+    <data>
+        <collection id="chatMessagesDc" class="com.company.aichat.entity.ChatMessage">
+            <loader id="chatMessagesDl">
+                <query>
+                    <![CDATA[select e from ChatMessage e order by e.createdDate]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base">
+                <property name="attachments"/>
+            </fetchPlan>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout padding="false">
+        <!-- The chat is the main content; the help panel with the demo scenarios slides in
+             from the side when the "?" button in the input is clicked. A fixed height rather
+             than expand, so the layout doesn't grow to the height of its content. -->
+        <sidePanelLayout id="helpPanelLayout"
+                         width="100%" height="100%"
+                         sidePanelOverlay="false"
+                         modal="false"
+                         themeNames="resizer-small"
+                         sidePanelHorizontalSize="26em"
+                         sidePanelHorizontalMinSize="20em"
+                         sidePanelResizable="true">
+            <aichat:aiChat id="chat"
+                           themeNames="fixed-toolbar no-header-footer-gap input-header-component-always-visible"
+                           attachmentsEnabled="true"
+                           maxFiles="3"
+                           maxFileSize="5242880"
+                           acceptedFileExtensions=".png,.jpg,.jpeg,.gif,.webp,.txt,.pdf"
+                           dataContainer="chatMessagesDc"
+                           autoSave="true"
+                           width="100%" height="100%">
+                <aichat:i18n>
+                    <aichat:messageInput placeholder="msg://messageInput.placeholder"/>
+                </aichat:i18n>
+                <aichat:actions>
+                    <aichat:action id="clearHistory" text="msg://clearHistory.text" icon="TRASH"/>
+                </aichat:actions>
+                <aichat:emptyStateHeader>
+                    <hbox width="100%"
+                          alignItems="CENTER" justifyContent="CENTER"
+                          css="padding-bottom: 3rem">
+                        <image resource="public/images/logo.png" width="3em"/>
+                        <h1 text="msg://emptyStateHeader.text"/>
+                    </hbox>
+                </aichat:emptyStateHeader>
+                <!-- Suggestion cards: each one submits a prompt the placeholder model answers
+                     with a different kind of content. -->
+                <aichat:emptyStateFooter>
+                    <hbox width="100%" justifyContent="CENTER"
+                          css="flex-wrap: wrap; padding-top: 2rem">
+                        <button id="suggestSummaryButton" icon="CLIPBOARD_TEXT"
+                                text="msg://suggestSummaryButton.text"/>
+                        <button id="suggestEmailButton" icon="ENVELOPE"
+                                text="msg://suggestEmailButton.text"/>
+                        <button id="suggestCodeButton" icon="CODE"
+                                text="msg://suggestCodeButton.text"/>
+                    </hbox>
+                </aichat:emptyStateFooter>
+
+                <aichat:userActions>
+                    <aichat:action id="userCopy" type="aichat_messageCopy"/>
+                </aichat:userActions>
+                <aichat:assistantActions>
+                    <aichat:action id="assistantCopy" type="aichat_messageCopy"/>
+                    <aichat:action id="regenerate" type="aichat_messageRegenerate"/>
+                    <aichat:action id="feedbackUp" icon="THUMBS_UP_O" description="msg://feedbackUp.description"/>
+                    <aichat:action id="feedbackDown" icon="THUMBS_DOWN_O" description="msg://feedbackDown.description"/>
+                </aichat:assistantActions>
+
+                <!-- The keywords the placeholder model reacts to, see PlaceholderChatModel. -->
+                <aichat:inputHeader>
+                    <hbox classNames="keyword-badges" width="100%" alignItems="CENTER">
+                        <span text="msg://keywordBadges.text"/>
+                        <badge text="summary" themeNames="small"/>
+                        <badge text="email" themeNames="small"/>
+                        <badge text="code" themeNames="small"/>
+                        <badge text="long" themeNames="small"/>
+                        <badge text="error" themeNames="small error"/>
+                        <badge text="fail" themeNames="small error"/>
+                    </hbox>
+                </aichat:inputHeader>
+                <aichat:inputPrefix>
+                    <dropdownButton icon="PLUS" themeNames="no-dropdown-indicators">
+                        <items>
+                            <componentItem id="attachFileMenuItem">
+                                <aichat:aiUploadTrigger id="attachFileTrigger"
+                                                        aiChatId="chat"
+                                                        icon="PAPERCLIP"
+                                                        themeNames="menu-item"
+                                                        text="msg://attachFileTrigger.text"/>
+                            </componentItem>
+                            <actionItem id="clearHistoryMenuItem" ref="chat.clearHistory"/>
+                        </items>
+                    </dropdownButton>
+                </aichat:inputPrefix>
+                <aichat:inputSuffix>
+                    <button id="helpButton" icon="QUESTION_CIRCLE_O"
+                            ariaLabel="msg://helpButton.ariaLabel">
+                        <tooltip text="msg://helpButton.ariaLabel"/>
+                    </button>
+                </aichat:inputSuffix>
+                <aichat:inputFooter>
+                    <div text="msg://inputFooter.text"
+                         css="text-align: center; margin-top: var(--vaadin-padding-m); margin-bottom: var(--vaadin-padding-l)"
+                         width="100%"/>
+                </aichat:inputFooter>
+            </aichat:aiChat>
+
+            <vbox id="helpPanel" classNames="help-panel" height="100%" padding="false" spacing="false">
+                <hbox classNames="help-panel-header" width="100%" alignItems="CENTER">
+                    <h3 text="msg://helpPanel.title" css="flex-grow: 1"/>
+                    <sidePanelLayoutCloser sidePanelLayoutId="helpPanelLayout"
+                                           themeNames="tertiary icon"
+                                           ariaLabel="msg://helpPanel.close"/>
+                </hbox>
+                <scroller width="100%" height="100%">
+                    <vbox classNames="help-panel-content" padding="false">
+                        <markdown content="msg://helpPanel.intro" width="100%"/>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpStreaming.title"/>
+                            <markdown content="msg://helpStreaming.text" width="100%"/>
+                            <button id="trySummaryButton" icon="PLAY" themeNames="small"
+                                    text="msg://tryIt.text"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpThinking.title"/>
+                            <markdown content="msg://helpThinking.text" width="100%"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpCode.title"/>
+                            <markdown content="msg://helpCode.text" width="100%"/>
+                            <button id="tryCodeButton" icon="PLAY" themeNames="small"
+                                    text="msg://tryIt.text"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpStop.title"/>
+                            <markdown content="msg://helpStop.text" width="100%"/>
+                            <button id="tryEmailButton" icon="PLAY" themeNames="small"
+                                    text="msg://tryIt.text"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpLong.title"/>
+                            <markdown content="msg://helpLong.text" width="100%"/>
+                            <button id="tryLongButton" icon="PLAY" themeNames="small"
+                                    text="msg://tryIt.text"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpErrors.title"/>
+                            <markdown content="msg://helpErrors.text" width="100%"/>
+                            <hbox>
+                                <button id="tryErrorButton" icon="PLAY" themeNames="small"
+                                        text="msg://tryErrorButton.text"/>
+                                <button id="tryFailButton" icon="PLAY" themeNames="small"
+                                        text="msg://tryFailButton.text"/>
+                            </hbox>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpAttachments.title"/>
+                            <markdown content="msg://helpAttachments.text" width="100%"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpActions.title"/>
+                            <markdown content="msg://helpActions.text" width="100%"/>
+                        </vbox>
+
+                        <vbox classNames="help-scenario" padding="false" spacing="false">
+                            <h4 text="msg://helpHistory.title"/>
+                            <markdown content="msg://helpHistory.text" width="100%"/>
+                        </vbox>
+                    </vbox>
+                </scroller>
+            </vbox>
+        </sidePanelLayout>
+    </layout>
+</view>

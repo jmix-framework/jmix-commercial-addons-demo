@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS"
+        logicalFilePath="com/company/aichat/liquibase/changelog/2026/11/06-140000-feedback-cascade.xml">
+    <!-- Removing a chat message (regenerate, clear history) removes the feedback given on it.
+         Mirrors @OnDeleteInverse(DeletePolicy.CASCADE) on MessageFeedback.chatMessage: for
+         hard-deleted entities the cascade is done by the database, not by the framework. -->
+    <changeSet id="1" author="ai-chat">
+        <dropForeignKeyConstraint baseTableName="MESSAGE_FEEDBACK"
+                                  constraintName="FK_MESSAGE_FEEDBACK_ON_CHAT_MESSAGE"/>
+        <addForeignKeyConstraint baseColumnNames="CHAT_MESSAGE_ID" baseTableName="MESSAGE_FEEDBACK"
+                                 constraintName="FK_MESSAGE_FEEDBACK_ON_CHAT_MESSAGE" referencedColumnNames="ID"
+                                 referencedTableName="CHAT_MESSAGE" onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
