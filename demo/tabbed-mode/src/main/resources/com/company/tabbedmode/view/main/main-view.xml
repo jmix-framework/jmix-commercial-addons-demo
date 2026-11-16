@@ -51,11 +51,7 @@
                     <action id="closeAllTabsAction" type="tabmod_closeAllTabs"/>
                 </actions>
             </mainTabSheet>
-            <initialLayout id="initialLayout">
-                <div classNames="jmix-initial-layout-content">
-                    <html content="msg://see-readme"/>
-                </div>
-            </initialLayout>
+            <initialLayout id="initialLayout"/>
         </workArea>
     </appLayout>
 </mainView>

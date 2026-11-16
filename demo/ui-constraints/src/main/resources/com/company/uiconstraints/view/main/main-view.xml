@@ -46,7 +46,6 @@
         <initialLayout id="initialLayout">
             <vbox padding="true">
                 <div id="welcomeMessage"/>
-                <html content="msg://see-readme"/>
             </vbox>
         </initialLayout>
     </appLayout>

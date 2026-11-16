@@ -5,15 +5,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    html, body, #outlet {
+    html, body {
       height: 100%;
       width: 100%;
       margin: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #outlet {
+      flex: 1;
+      min-height: 0;
+      /* Makes AppLayout's fixed navbar and drawer position inside the outlet, not over the demo panel */
+      transform: translateZ(0);
+    }
+
+    #demo-panel {
+      flex: none;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--vaadin-border-color-secondary, rgba(0, 0, 0, 0.1));
+      color: var(--vaadin-text-color-secondary, inherit);
+      font-size: 0.875rem;
+      text-align: center;
     }
   </style>
   <!-- index.ts is included here automatically (either by the dev server or during the build) -->
 </head>
 <body>
+  <div id="demo-panel">
+    See <a href="https://github.com/jmix-framework/jmix-commercial-addons-demo-2/blob/main/demo/grouping-data-grid/README.md" target="_blank">README on GitHub</a>
+    for the project description and demo scenario.
+  </div>
   <!-- This outlet div is where the views are rendered -->
   <div id="outlet"></div>
 </body>

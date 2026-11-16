@@ -46,7 +46,6 @@
         <initialLayout id="initialLayout" classNames="jmix-initial-layout">
             <div>
                 <div id="welcomeMessage"/>
-                <html content="msg://see-readme"/>
             </div>
         </initialLayout>
     </appLayout>

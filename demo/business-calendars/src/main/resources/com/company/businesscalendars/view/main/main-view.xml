@@ -43,10 +43,6 @@
                 </nav>
             </section>
         </drawerLayout>
-        <initialLayout id="initialLayout">
-            <div classNames="jmix-initial-layout-content">
-                <html content="msg://see-readme"/>
-            </div>
-        </initialLayout>
+        <initialLayout id="initialLayout"/>
     </appLayout>
 </mainView>
