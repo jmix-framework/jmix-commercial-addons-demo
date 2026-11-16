@@ -18,6 +18,7 @@ Open the root project in the IDE with the Jmix Studio plugin installed and refer
 - [Notifications](demo/notifications/README.md)
 - [Tabbed Application Mode](demo/tabbed-mode/README.md)
 - [UI Constraints](demo/uiconstraints/README.md)
+- [UI Recovery](demo/ui-recovery/README.md)
 - [WebDAV](demo/webdav/README.md)
 
 To test the commercial add-ons in another project, copy the `trial_repository` folder from this project. Then, modify your `build.gradle` file to use the trial artifacts, as it is done in this project.

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://orderListView.title"
+      focusComponent="ordersDataGrid">
+    <data>
+        <collection id="ordersDc"
+                    class="com.company.uirecovery.entity.Order">
+            <fetchPlan extends="_base">
+                <property name="customer" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="ordersDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Order_ e order by e.date desc]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="ordersDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="createButton" action="ordersDataGrid.createAction"/>
+                <button id="editButton" action="ordersDataGrid.editAction"/>
+                <button id="removeButton" action="ordersDataGrid.removeAction"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="ordersDl"/>
+            </endSlot>
+        </hbox>
+        <dataGrid id="ordersDataGrid"
+                  width="100%"
+                  columnReorderingAllowed="true"
+                  minHeight="20em"
+                  dataContainer="ordersDc">
+            <actions>
+                <action id="createAction" type="list_create"/>
+                <action id="editAction" type="list_edit"/>
+                <action id="removeAction" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="number"/>
+                <column property="date"/>
+                <column property="customer"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

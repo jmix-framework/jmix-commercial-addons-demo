@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        logicalFilePath="com/company/uirecovery/liquibase/changelog/020-order-model.xml">
+
+    <changeSet id="1" author="ui-recovery">
+        <createTable tableName="CUSTOMER">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CUSTOMER"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="ui-recovery">
+        <createTable tableName="ORDER_">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_ORDER_"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NUMBER_" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_" type="DATE"/>
+            <column name="CUSTOMER_ID" type="UUID"/>
+            <column name="COMMENT_" type="CLOB"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="ui-recovery">
+        <createTable tableName="ORDER_LINE">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_ORDER_LINE"/>
+            </column>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ORDER_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRODUCT" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="QUANTITY" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRICE" type="DECIMAL(19, 2)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="ui-recovery">
+        <createIndex indexName="IDX_ORDER__CUSTOMER" tableName="ORDER_">
+            <column name="CUSTOMER_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="CUSTOMER_ID" baseTableName="ORDER_"
+                                 constraintName="FK_ORDER__ON_CUSTOMER" referencedColumnNames="ID"
+                                 referencedTableName="CUSTOMER"/>
+    </changeSet>
+
+    <changeSet id="5" author="ui-recovery">
+        <createIndex indexName="IDX_ORDER_LINE_ORDER" tableName="ORDER_LINE">
+            <column name="ORDER_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="ORDER_ID" baseTableName="ORDER_LINE"
+                                 constraintName="FK_ORDER_LINE_ON_ORDER" onDelete="CASCADE"
+                                 referencedColumnNames="ID" referencedTableName="ORDER_"/>
+    </changeSet>
+
+</databaseChangeLog>

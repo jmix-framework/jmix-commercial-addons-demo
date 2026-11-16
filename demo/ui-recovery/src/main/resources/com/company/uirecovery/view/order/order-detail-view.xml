@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:uirec="http://jmix.io/schema/uirecovery/ui"
+      title="msg://orderDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="orderDc"
+                  class="com.company.uirecovery.entity.Order">
+            <fetchPlan extends="_base">
+                <property name="customer" fetchPlan="_base"/>
+                <property name="lines" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="orderDl"/>
+            <collection id="linesDc" property="lines"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <uirec:drafts id="draftsFacet"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="orderDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <textField id="numberField" property="number"/>
+            <datePicker id="dateField" property="date"/>
+            <entityPicker id="customerField" property="customer">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textArea id="commentField" property="comment" height="9.5em" colspan="2"
+                      valueChangeMode="LAZY" valueChangeTimeout="1000"/>
+        </formLayout>
+        <h4 id="linesHeader" text="msg://linesHeader.text"/>
+        <hbox id="linesButtonsPanel" classNames="buttons-panel">
+            <button id="createLineButton" action="linesDataGrid.createAction"/>
+            <button id="editLineButton" action="linesDataGrid.editAction"/>
+            <button id="removeLineButton" action="linesDataGrid.removeAction"/>
+        </hbox>
+        <dataGrid id="linesDataGrid"
+                  width="100%"
+                  minHeight="15em"
+                  dataContainer="linesDc">
+            <actions>
+                <action id="createAction" type="list_create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="editAction" type="list_edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="removeAction" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="product"/>
+                <column property="quantity"/>
+                <column property="price"/>
+            </columns>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
