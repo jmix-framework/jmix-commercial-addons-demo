@@ -5,8 +5,8 @@ import io.jmix.businesscalendar.annotation.*;
 import java.time.DayOfWeek;
 import java.time.Month;
 
-@BusinessCalendar(name = "Retail Business Calendar 2025", code = "retail-2025")
-public interface RetailCalendar2025 {
+@BusinessCalendar(name = "Retail Business Calendar 2026", code = "retail-2026")
+public interface RetailCalendar2026 {
 
     @WeeklyHoliday(DayOfWeek.SATURDAY)
     @WeeklyHoliday(value = DayOfWeek.SUNDAY, description = "weekend")
@@ -15,7 +15,7 @@ public interface RetailCalendar2025 {
     @CronHoliday(expression = "* * * 1 JAN ?")
     void newYearDay();
 
-    @FixedDayHoliday(fixedDate = "2025-04-18")
+    @FixedDayHoliday(fixedDate = "2026-04-03")
     void goodFriday();
 
     @FixedYearlyHoliday(month = Month.DECEMBER, dayOfMonth = 25)
@@ -28,13 +28,13 @@ public interface RetailCalendar2025 {
     @ScheduledBusinessDay(dayOfWeek = DayOfWeek.FRIDAY, startTime = "09:00", endTime = "18:00")
     void scheduledBusinessDays();
 
-    @AdditionalBusinessDay(fixedDate = "2025-11-28", startTime = "09:00", endTime = "22:00")
+    @AdditionalBusinessDay(fixedDate = "2026-11-28", startTime = "09:00", endTime = "22:00")
     void blackFriday();
 
-    @AdditionalBusinessDay(fixedDate = "2025-12-01", startTime = "09:00", endTime = "22:00")
+    @AdditionalBusinessDay(fixedDate = "2026-12-05", startTime = "09:00", endTime = "22:00")
     void cyberMonday();
 
-    @AdditionalBusinessDay(fixedDate = "2025-12-27", startTime = "10:00", endTime = "18:00")
-    @AdditionalBusinessDay(fixedDate = "2025-12-28", startTime = "10:00", endTime = "18:00")
+    @AdditionalBusinessDay(fixedDate = "2026-12-26", startTime = "10:00", endTime = "18:00")
+    @AdditionalBusinessDay(fixedDate = "2026-12-27", startTime = "10:00", endTime = "18:00")
     void preNewYearSale();
 }

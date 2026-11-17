@@ -3,8 +3,8 @@
 ## Overview 
 
 The project includes two business calendars:
-- `Retail Business Calendar 2025` is defined in the [RetailCalendar2025](src/main/java/com/company/businesscalendars/RetailCalendar2025.java) class using annotations.
-- `Standard Corporate Calendar 2025` is defined in the database.
+- `Retail Business Calendar 2026` is defined in the [RetailCalendar2026](src/main/java/com/company/businesscalendars/RetailCalendar2026.java) class using annotations.
+- `Standard Corporate Calendar 2026` is defined in the database.
 
 [BusinessCalendarTestView](src/main/java/com/company/businesscalendars/view/businesscalendartest/BusinessCalendarTestView.java) demonstrates usage of business calendars API. It is available via the *Application → Business calendar test* menu item.
 
