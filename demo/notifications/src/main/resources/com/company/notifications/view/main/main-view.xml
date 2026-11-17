@@ -46,6 +46,13 @@
                 </nav>
             </section>
         </drawerLayout>
-        <initialLayout id="initialLayout"/>
+        <initialLayout id="initialLayout" classNames="jmix-initial-layout">
+            <div classNames="jmix-initial-layout-content">
+                <h1 text="msg://applicationTitle.text"
+                    classNames="jmix-initial-layout-title"/>
+                <image resource="public/images/logo.png"
+                       classNames="jmix-initial-layout-logo"/>
+            </div>
+        </initialLayout>
     </appLayout>
 </mainView>

@@ -4,7 +4,6 @@
     <menu opened="true" id="application" title="msg://com.company.groupdatagrid/menu.application.title">
         <item view="Client.list" title="msg://com.company.groupdatagrid.view.client/clientListView.title"/>
         <item view="Order_.list" title="msg://com.company.groupdatagrid.view.order/orderListView.title"/>
-        <separator/>
         <item view="User.list" title="msg://com.company.groupdatagrid.view.user/UserListView.title"/>
     </menu>
 </menu-config>
